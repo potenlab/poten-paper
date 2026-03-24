@@ -1,0 +1,1325 @@
+/**
+ * Supabase Database Types
+ *
+ * This is a placeholder type definition. It will be replaced with
+ * auto-generated types from Supabase CLI once the database schema is complete.
+ *
+ * To generate types:
+ * npx supabase gen types typescript --project-id <project-id> > src/types/database.ts
+ */
+
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
+
+export interface Database {
+  public: {
+    Tables: {
+      profiles: {
+        Row: {
+          id: string;
+          email: string;
+          full_name: string | null;
+          company_name: string | null;
+          job_title: string | null;
+          avatar_url: string | null;
+          role: Database['public']['Enums']['user_role'];
+          approval_status: Database['public']['Enums']['approval_status'];
+          rejection_reason: string | null;
+          region: string | null;
+          industry: string | null;
+          level: string | null;
+          username: string | null;
+          nickname: string | null;
+          bio: string | null;
+          sub_region: string | null;
+          sub_industry: string | null;
+          business_type: string | null;
+          business_stage: string | null;
+          business_needs: string | null;
+          onboarding_completed: boolean;
+          phone: string | null;
+          primary_business_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          email: string;
+          full_name?: string | null;
+          company_name?: string | null;
+          job_title?: string | null;
+          avatar_url?: string | null;
+          role?: Database['public']['Enums']['user_role'];
+          approval_status?: Database['public']['Enums']['approval_status'];
+          rejection_reason?: string | null;
+          region?: string | null;
+          industry?: string | null;
+          level?: string | null;
+          username?: string | null;
+          nickname?: string | null;
+          bio?: string | null;
+          sub_region?: string | null;
+          sub_industry?: string | null;
+          business_type?: string | null;
+          business_stage?: string | null;
+          business_needs?: string | null;
+          onboarding_completed?: boolean;
+          phone?: string | null;
+          primary_business_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          full_name?: string | null;
+          company_name?: string | null;
+          job_title?: string | null;
+          avatar_url?: string | null;
+          role?: Database['public']['Enums']['user_role'];
+          approval_status?: Database['public']['Enums']['approval_status'];
+          rejection_reason?: string | null;
+          region?: string | null;
+          industry?: string | null;
+          level?: string | null;
+          username?: string | null;
+          nickname?: string | null;
+          bio?: string | null;
+          sub_region?: string | null;
+          sub_industry?: string | null;
+          business_type?: string | null;
+          business_stage?: string | null;
+          business_needs?: string | null;
+          onboarding_completed?: boolean;
+          phone?: string | null;
+          primary_business_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      user_businesses: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          tagline: string | null;
+          business_type: string | null;
+          business_stage: string | null;
+          offerings: string | null;
+          reference_links: string[];
+          annual_revenue: number | null;
+          revenue_growth_rate: number | null;
+          investment_stage: string | null;
+          total_investment: number | null;
+          support_programs: string[];
+          team_size: number | null;
+          remote_policy: string | null;
+          main_tools: string[];
+          role: string | null;
+          founded_at: string | null;
+          logo_url: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          name: string;
+          tagline?: string | null;
+          business_type?: string | null;
+          business_stage?: string | null;
+          offerings?: string | null;
+          reference_links?: string[];
+          annual_revenue?: number | null;
+          revenue_growth_rate?: number | null;
+          investment_stage?: string | null;
+          total_investment?: number | null;
+          support_programs?: string[];
+          team_size?: number | null;
+          remote_policy?: string | null;
+          main_tools?: string[];
+          role?: string | null;
+          founded_at?: string | null;
+          logo_url?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          name?: string;
+          tagline?: string | null;
+          business_type?: string | null;
+          business_stage?: string | null;
+          offerings?: string | null;
+          reference_links?: string[];
+          annual_revenue?: number | null;
+          revenue_growth_rate?: number | null;
+          investment_stage?: string | null;
+          total_investment?: number | null;
+          support_programs?: string[];
+          team_size?: number | null;
+          remote_policy?: string | null;
+          main_tools?: string[];
+          role?: string | null;
+          founded_at?: string | null;
+          logo_url?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      expert_insights: {
+        Row: {
+          id: number;
+          expert_profile_id: string;
+          author_id: string;
+          title: string;
+          content: string | null;
+          thumbnail_url: string | null;
+          category: string | null;
+          view_count: number;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          expert_profile_id: string;
+          author_id: string;
+          title: string;
+          content?: string | null;
+          thumbnail_url?: string | null;
+          category?: string | null;
+          view_count?: number;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          expert_profile_id?: string;
+          author_id?: string;
+          title?: string;
+          content?: string | null;
+          thumbnail_url?: string | null;
+          category?: string | null;
+          view_count?: number;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'expert_insights_expert_profile_id_fkey';
+            columns: ['expert_profile_id'];
+            referencedRelation: 'expert_profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'expert_insights_author_id_fkey';
+            columns: ['author_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      expert_profiles: {
+        Row: {
+          id: string;
+          user_id: string;
+          business_name: string;
+          business_registration_number: string | null;
+          category: Database['public']['Enums']['expert_category'];
+          subcategories: string[];
+          service_description: string | null;
+          specialty: string[];
+          price_range_min: number | null;
+          price_range_max: number | null;
+          service_regions: string[];
+          portfolio_url: string | null;
+          portfolio_files: string[];
+          status: Database['public']['Enums']['expert_status'];
+          verification_documents: string[];
+          verified_at: string | null;
+          verified_by: string | null;
+          rejection_reason: string | null;
+          is_featured: boolean;
+          is_available: boolean;
+          view_count: number;
+          contact_count: number;
+          created_at: string;
+          updated_at: string;
+          submitted_at: string | null;
+          collaboration_needs: string | null;
+          bio: string | null;
+          experience_years: number | null;
+          hourly_rate: number | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          business_name: string;
+          business_registration_number?: string | null;
+          category: Database['public']['Enums']['expert_category'];
+          subcategories?: string[];
+          service_description?: string | null;
+          specialty?: string[];
+          price_range_min?: number | null;
+          price_range_max?: number | null;
+          service_regions?: string[];
+          portfolio_url?: string | null;
+          portfolio_files?: string[];
+          status?: Database['public']['Enums']['expert_status'];
+          verification_documents?: string[];
+          verified_at?: string | null;
+          verified_by?: string | null;
+          rejection_reason?: string | null;
+          is_featured?: boolean;
+          is_available?: boolean;
+          view_count?: number;
+          contact_count?: number;
+          created_at?: string;
+          updated_at?: string;
+          submitted_at?: string | null;
+          collaboration_needs?: string | null;
+          bio?: string | null;
+          experience_years?: number | null;
+          hourly_rate?: number | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          business_name?: string;
+          business_registration_number?: string | null;
+          category?: Database['public']['Enums']['expert_category'];
+          subcategories?: string[];
+          service_description?: string | null;
+          specialty?: string[];
+          price_range_min?: number | null;
+          price_range_max?: number | null;
+          service_regions?: string[];
+          portfolio_url?: string | null;
+          portfolio_files?: string[];
+          status?: Database['public']['Enums']['expert_status'];
+          verification_documents?: string[];
+          verified_at?: string | null;
+          verified_by?: string | null;
+          rejection_reason?: string | null;
+          is_featured?: boolean;
+          is_available?: boolean;
+          view_count?: number;
+          contact_count?: number;
+          created_at?: string;
+          updated_at?: string;
+          submitted_at?: string | null;
+          collaboration_needs?: string | null;
+          bio?: string | null;
+          experience_years?: number | null;
+          hourly_rate?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'expert_profiles_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'expert_profiles_verified_by_fkey';
+            columns: ['verified_by'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      posts: {
+        Row: {
+          id: number;
+          author_id: string;
+          content: string;
+          media_urls: string[];
+          like_count: number;
+          comment_count: number;
+          is_pinned: boolean;
+          is_hidden: boolean;
+          hidden_reason: string | null;
+          hidden_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          author_id: string;
+          content: string;
+          media_urls?: string[];
+          like_count?: number;
+          comment_count?: number;
+          is_pinned?: boolean;
+          is_hidden?: boolean;
+          hidden_reason?: string | null;
+          hidden_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          author_id?: string;
+          content?: string;
+          media_urls?: string[];
+          like_count?: number;
+          comment_count?: number;
+          is_pinned?: boolean;
+          is_hidden?: boolean;
+          hidden_reason?: string | null;
+          hidden_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'posts_author_id_fkey';
+            columns: ['author_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'posts_hidden_by_fkey';
+            columns: ['hidden_by'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      comments: {
+        Row: {
+          id: number;
+          post_id: number | null;
+          event_id: number | null;
+          author_id: string;
+          parent_id: number | null;
+          content: string;
+          like_count: number;
+          is_hidden: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          post_id?: number | null;
+          event_id?: number | null;
+          author_id: string;
+          parent_id?: number | null;
+          content: string;
+          like_count?: number;
+          is_hidden?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          post_id?: number | null;
+          event_id?: number | null;
+          author_id?: string;
+          parent_id?: number | null;
+          content?: string;
+          like_count?: number;
+          is_hidden?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'comments_post_id_fkey';
+            columns: ['post_id'];
+            referencedRelation: 'posts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'comments_event_id_fkey';
+            columns: ['event_id'];
+            referencedRelation: 'user_events';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'comments_author_id_fkey';
+            columns: ['author_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'comments_parent_id_fkey';
+            columns: ['parent_id'];
+            referencedRelation: 'comments';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      likes: {
+        Row: {
+          id: number;
+          user_id: string;
+          likeable_type: Database['public']['Enums']['likeable_type'];
+          likeable_id: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          user_id: string;
+          likeable_type: Database['public']['Enums']['likeable_type'];
+          likeable_id: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: number;
+          user_id?: string;
+          likeable_type?: Database['public']['Enums']['likeable_type'];
+          likeable_id?: number;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'likes_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      collaboration_requests: {
+        Row: {
+          id: number;
+          sender_id: string;
+          recipient_id: string;
+          expert_profile_id: string | null;
+          type: Database['public']['Enums']['collaboration_type'];
+          subject: string;
+          message: string;
+          contact_info: string | null;
+          status: Database['public']['Enums']['collaboration_status'];
+          response_message: string | null;
+          responded_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          sender_id: string;
+          recipient_id: string;
+          expert_profile_id?: string | null;
+          type: Database['public']['Enums']['collaboration_type'];
+          subject: string;
+          message: string;
+          contact_info?: string | null;
+          status?: Database['public']['Enums']['collaboration_status'];
+          response_message?: string | null;
+          responded_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          sender_id?: string;
+          recipient_id?: string;
+          expert_profile_id?: string | null;
+          type?: Database['public']['Enums']['collaboration_type'];
+          subject?: string;
+          message?: string;
+          contact_info?: string | null;
+          status?: Database['public']['Enums']['collaboration_status'];
+          response_message?: string | null;
+          responded_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'collaboration_requests_sender_id_fkey';
+            columns: ['sender_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'collaboration_requests_recipient_id_fkey';
+            columns: ['recipient_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'collaboration_requests_expert_profile_id_fkey';
+            columns: ['expert_profile_id'];
+            referencedRelation: 'expert_profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      support_programs: {
+        Row: {
+          id: number;
+          title: string;
+          description: string;
+          organization: string;
+          category: Database['public']['Enums']['program_category'];
+          amount: string | null;
+          eligibility: string | null;
+          benefits: string[];
+          external_url: string | null;
+          image_url: string | null;
+          application_start: string | null;
+          application_deadline: string | null;
+          program_start: string | null;
+          program_end: string | null;
+          status: Database['public']['Enums']['program_status'];
+          created_by: string;
+          view_count: number;
+          bookmark_count: number;
+          is_featured: boolean;
+          created_at: string;
+          updated_at: string;
+          published_at: string | null;
+          ai_summary: Record<string, unknown> | null;
+        };
+        Insert: {
+          id?: number;
+          title: string;
+          description: string;
+          organization: string;
+          category: Database['public']['Enums']['program_category'];
+          amount?: string | null;
+          eligibility?: string | null;
+          benefits?: string[];
+          external_url?: string | null;
+          image_url?: string | null;
+          application_start?: string | null;
+          application_deadline?: string | null;
+          program_start?: string | null;
+          program_end?: string | null;
+          status?: Database['public']['Enums']['program_status'];
+          created_by: string;
+          view_count?: number;
+          bookmark_count?: number;
+          is_featured?: boolean;
+          created_at?: string;
+          updated_at?: string;
+          published_at?: string | null;
+          ai_summary?: Record<string, unknown> | null;
+        };
+        Update: {
+          id?: number;
+          title?: string;
+          description?: string;
+          organization?: string;
+          category?: Database['public']['Enums']['program_category'];
+          amount?: string | null;
+          eligibility?: string | null;
+          benefits?: string[];
+          external_url?: string | null;
+          image_url?: string | null;
+          application_start?: string | null;
+          application_deadline?: string | null;
+          program_start?: string | null;
+          program_end?: string | null;
+          status?: Database['public']['Enums']['program_status'];
+          created_by?: string;
+          view_count?: number;
+          bookmark_count?: number;
+          is_featured?: boolean;
+          created_at?: string;
+          updated_at?: string;
+          published_at?: string | null;
+          ai_summary?: Record<string, unknown> | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'support_programs_created_by_fkey';
+            columns: ['created_by'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      bookmarks: {
+        Row: {
+          id: number;
+          user_id: string;
+          bookmarkable_type: Database['public']['Enums']['bookmarkable_type'];
+          bookmarkable_id: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          user_id: string;
+          bookmarkable_type: Database['public']['Enums']['bookmarkable_type'];
+          bookmarkable_id: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: number;
+          user_id?: string;
+          bookmarkable_type?: Database['public']['Enums']['bookmarkable_type'];
+          bookmarkable_id?: number;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'bookmarks_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      notifications: {
+        Row: {
+          id: number;
+          user_id: string;
+          type: Database['public']['Enums']['notification_type'];
+          title: string;
+          body: string | null;
+          reference_type: string | null;
+          reference_id: string | null;
+          metadata: Json;
+          is_read: boolean;
+          read_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          user_id: string;
+          type: Database['public']['Enums']['notification_type'];
+          title: string;
+          body?: string | null;
+          reference_type?: string | null;
+          reference_id?: string | null;
+          metadata?: Json;
+          is_read?: boolean;
+          read_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: number;
+          user_id?: string;
+          type?: Database['public']['Enums']['notification_type'];
+          title?: string;
+          body?: string | null;
+          reference_type?: string | null;
+          reference_id?: string | null;
+          metadata?: Json;
+          is_read?: boolean;
+          read_at?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'notifications_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      user_events: {
+        Row: {
+          id: number;
+          author_id: string;
+          title: string;
+          description: string | null;
+          event_type: Database['public']['Enums']['event_type'];
+          category: Database['public']['Enums']['program_category'] | null;
+          image_url: string | null;
+          external_url: string | null;
+          event_date: string | null;
+          location: string | null;
+          is_active: boolean;
+          view_count: number;
+          comment_count: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          author_id: string;
+          title: string;
+          description?: string | null;
+          event_type?: Database['public']['Enums']['event_type'];
+          category?: Database['public']['Enums']['program_category'] | null;
+          image_url?: string | null;
+          external_url?: string | null;
+          event_date?: string | null;
+          location?: string | null;
+          is_active?: boolean;
+          view_count?: number;
+          comment_count?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          author_id?: string;
+          title?: string;
+          description?: string | null;
+          event_type?: Database['public']['Enums']['event_type'];
+          category?: Database['public']['Enums']['program_category'] | null;
+          image_url?: string | null;
+          external_url?: string | null;
+          event_date?: string | null;
+          location?: string | null;
+          is_active?: boolean;
+          view_count?: number;
+          comment_count?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'user_events_author_id_fkey';
+            columns: ['author_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      news: {
+        Row: {
+          id: number;
+          author_id: string;
+          title: string;
+          content: string | null;
+          category: string | null;
+          image_url: string | null;
+          external_url: string | null;
+          view_count: number;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          author_id: string;
+          title: string;
+          content?: string | null;
+          category?: string | null;
+          image_url?: string | null;
+          external_url?: string | null;
+          view_count?: number;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          author_id?: string;
+          title?: string;
+          content?: string | null;
+          category?: string | null;
+          image_url?: string | null;
+          external_url?: string | null;
+          view_count?: number;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'news_author_id_fkey';
+            columns: ['author_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      news_daily_summaries: {
+        Row: {
+          id: number;
+          summary_date: string;
+          category: string;
+          summary_html: string;
+          article_count: number;
+          article_ids: number[];
+          model_used: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          summary_date: string;
+          category: string;
+          summary_html: string;
+          article_count?: number;
+          article_ids?: number[];
+          model_used?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: number;
+          summary_date?: string;
+          category?: string;
+          summary_html?: string;
+          article_count?: number;
+          article_ids?: number[];
+          model_used?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      feature_usage: {
+        Row: {
+          id: string;
+          user_id: string;
+          feature: string;
+          payment_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          feature: string;
+          payment_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          feature?: string;
+          payment_id?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'feature_usage_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'feature_usage_payment_id_fkey';
+            columns: ['payment_id'];
+            referencedRelation: 'payments';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      poten_diagnoses: {
+        Row: {
+          id: string;
+          user_id: string;
+          user_email: string | null;
+          user_name: string | null;
+          user_phone: string | null;
+          file_name: string;
+          overall_score: number;
+          mode: string;
+          result: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          user_email?: string | null;
+          user_name?: string | null;
+          user_phone?: string | null;
+          file_name: string;
+          overall_score: number;
+          mode?: string;
+          result: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          user_email?: string | null;
+          user_name?: string | null;
+          user_phone?: string | null;
+          file_name?: string;
+          overall_score?: number;
+          mode?: string;
+          result?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'poten_diagnoses_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      poten_inquiries: {
+        Row: {
+          id: string;
+          name: string;
+          email: string | null;
+          phone: string | null;
+          inquiry_type: string;
+          message: string;
+          status: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          email?: string | null;
+          phone?: string | null;
+          inquiry_type: string;
+          message: string;
+          status?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          email?: string | null;
+          phone?: string | null;
+          inquiry_type?: string;
+          message?: string;
+          status?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      business_plans: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          industry: string | null;
+          business_stage: string | null;
+          input_type: string;
+          input_data: Json;
+          file_name: string | null;
+          sections: Json;
+          research_data: Json | null;
+          status: string;
+          is_public: boolean;
+          error_message: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          industry?: string | null;
+          business_stage?: string | null;
+          input_type: string;
+          input_data: Json;
+          file_name?: string | null;
+          sections: Json;
+          research_data?: Json | null;
+          status?: string;
+          is_public?: boolean;
+          error_message?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          title?: string;
+          industry?: string | null;
+          business_stage?: string | null;
+          input_type?: string;
+          input_data?: Json;
+          file_name?: string | null;
+          sections?: Json;
+          research_data?: Json | null;
+          status?: string;
+          is_public?: boolean;
+          error_message?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'business_plans_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      follows: {
+        Row: {
+          id: number;
+          follower_id: string;
+          following_id: string;
+          created_at: string;
+        };
+        Insert: {
+          follower_id: string;
+          following_id: string;
+        };
+        Update: {
+          follower_id?: string;
+          following_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'follows_follower_id_fkey';
+            columns: ['follower_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'follows_following_id_fkey';
+            columns: ['following_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      poten_paper_prompts: {
+        Row: {
+          id: string;
+          slug: string;
+          name: string;
+          description: string | null;
+          content: string;
+          is_active: boolean;
+          version: number;
+          created_at: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          slug: string;
+          name: string;
+          description?: string | null;
+          content: string;
+          is_active?: boolean;
+          version?: number;
+          created_at?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          slug?: string;
+          name?: string;
+          description?: string | null;
+          content?: string;
+          is_active?: boolean;
+          version?: number;
+          created_at?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'poten_paper_prompts_updated_by_fkey';
+            columns: ['updated_by'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      subscriptions: {
+        Row: {
+          id: string;
+          user_id: string;
+          plan: string;
+          status: string;
+          amount: number;
+          started_at: string;
+          expires_at: string;
+          cancelled_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          plan: string;
+          status?: string;
+          amount: number;
+          started_at?: string;
+          expires_at: string;
+          cancelled_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          plan?: string;
+          status?: string;
+          amount?: number;
+          started_at?: string;
+          expires_at?: string;
+          cancelled_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'subscriptions_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      payments: {
+        Row: {
+          id: string;
+          user_id: string;
+          subscription_id: string | null;
+          order_id: string;
+          payment_key: string | null;
+          amount: number;
+          status: string;
+          method: string | null;
+          plan: string;
+          toss_response: Json | null;
+          error_code: string | null;
+          error_message: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          subscription_id?: string | null;
+          order_id: string;
+          payment_key?: string | null;
+          amount: number;
+          status?: string;
+          method?: string | null;
+          plan: string;
+          toss_response?: Json | null;
+          error_code?: string | null;
+          error_message?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          subscription_id?: string | null;
+          order_id?: string;
+          payment_key?: string | null;
+          amount?: number;
+          status?: string;
+          method?: string | null;
+          plan?: string;
+          toss_response?: Json | null;
+          error_code?: string | null;
+          error_message?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'payments_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'payments_subscription_id_fkey';
+            columns: ['subscription_id'];
+            referencedRelation: 'subscriptions';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      poten_paper_templates: {
+        Row: {
+          id: string;
+          name: string;
+          description: string | null;
+          structure: Json;
+          is_default: boolean;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          description?: string | null;
+          structure: Json;
+          is_default?: boolean;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          description?: string | null;
+          structure?: Json;
+          is_default?: boolean;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'poten_paper_templates_updated_by_fkey';
+            columns: ['updated_by'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+    };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: {
+      user_role: 'member' | 'expert' | 'admin';
+      approval_status: 'pending' | 'approved' | 'rejected' | 'suspended';
+      likeable_type: 'post' | 'comment';
+      expert_status: 'draft' | 'pending_review' | 'approved' | 'rejected';
+      event_type: 'event' | 'ad' | 'announcement';
+      expert_category:
+        | 'marketing'
+        | 'development'
+        | 'design'
+        | 'legal'
+        | 'finance'
+        | 'hr'
+        | 'operations'
+        | 'strategy'
+        | 'other';
+      collaboration_type: 'coffee_chat' | 'collaboration';
+      collaboration_status: 'pending' | 'accepted' | 'declined' | 'cancelled';
+      program_status: 'draft' | 'published' | 'archived';
+      program_category:
+        | 'funding'
+        | 'mentoring'
+        | 'education'
+        | 'networking'
+        | 'space'
+        | 'survey'
+        | 'notice'
+        | 'other';
+      bookmarkable_type: 'expert_profile' | 'support_program' | 'post';
+      notification_type:
+        | 'member_approved'
+        | 'member_rejected'
+        | 'expert_approved'
+        | 'expert_rejected'
+        | 'new_comment'
+        | 'new_like'
+        | 'new_collaboration_request'
+        | 'collaboration_accepted'
+        | 'collaboration_declined'
+        | 'system_announcement';
+    };
+    CompositeTypes: Record<string, never>;
+  };
+}
