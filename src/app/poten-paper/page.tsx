@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import {
@@ -102,7 +101,6 @@ const INPUT_OPTIONS = [
 
 export default function PotenPaperLandingPage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
 
   const handleStart = () => {
     router.push('/poten-paper/new');
@@ -154,16 +152,6 @@ export default function PotenPaperLandingPage() {
                 사업계획서 만들기
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
-              {isAuthenticated && (
-                <Button
-                  onClick={() => router.push('/mypage?tab=poten-paper')}
-                  variant="outline"
-                  className="h-14 px-8 rounded-2xl text-[16px] font-semibold"
-                >
-                  <ScrollText className="w-5 h-5 mr-2" />
-                  내 사업계획서
-                </Button>
-              )}
             </div>
           </motion.div>
         </div>

@@ -30,7 +30,9 @@ import { PaperResultLayout } from './components/result/paper-result-layout';
 export default function PotenPaperNewPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const openLogin = () => router.push('/login');
+  const openLogin = () => {
+    router.push('/login?next=/poten-paper/new');
+  };
 
   const [step, setStep] = useState<PaperStep>('input-method');
   const [inputMethod, setInputMethod] = useState<InputMethod | null>(null);
