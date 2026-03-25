@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { pretendard } from '@/lib/fonts';
 import { Providers } from '@/app/providers';
+import { Header } from '@/components/header';
 import '@/app/globals.css';
 
 export const metadata = {
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="min-h-screen bg-background font-sans antialiased">
         <Providers>
           <div className="relative flex min-h-screen flex-col bg-background">
+            <Header />
             <main className="flex flex-1 flex-col">{children}</main>
           </div>
         </Providers>
