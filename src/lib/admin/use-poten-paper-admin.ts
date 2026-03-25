@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabase } from '@/lib/supabase/client';
 
 export interface AdminPlanListItem {
   id: string;
@@ -30,18 +30,18 @@ const queryKeys = {
 };
 
 async function fetchStats(): Promise<PotenPaperAdminStats> {
-  const { count: total } = await supabase
+  const { count: total } = await getSupabase()
     .from('business_plans')
     .select('*', { count: 'exact', head: true });
 
-  const { count: completedCount } = await supabase
+  const { count: completedCount } = await getSupabase()
     .from('business_plans')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'completed');
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const { count: todayCount } = await supabase
+  const { count: todayCount } = await getSupabase()
     .from('business_plans')
     .select('*', { count: 'exact', head: true })
     .gte('created_at', today.toISOString());
@@ -55,7 +55,7 @@ async function fetchStats(): Promise<PotenPaperAdminStats> {
 }
 
 async function fetchList(search?: string): Promise<AdminPlanListItem[]> {
-  let query = supabase
+  let query = getSupabase()
     .from('business_plans')
     .select('id, user_id, title, industry, business_stage, input_type, status, created_at')
     .order('created_at', { ascending: false });
@@ -72,7 +72,7 @@ async function fetchList(search?: string): Promise<AdminPlanListItem[]> {
   let profileMap: Record<string, { email: string | null; name: string | null }> = {};
 
   if (userIds.length > 0) {
-    const { data: profiles } = await supabase
+    const { data: profiles } = await getSupabase()
       .from('profiles')
       .select('id, email, full_name')
       .in('id', userIds);
@@ -114,7 +114,7 @@ export function useDeleteBusinessPlan() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('business_plans')
         .delete()
         .eq('id', id);

@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabase } from '@/lib/supabase/client';
 import type {
   BusinessPlanDocument,
   BusinessPlanSection,
@@ -90,7 +90,7 @@ export function useSectionRegeneration({
       }
 
       if (resultId && userId) {
-        await supabase
+        await getSupabase()
           .from('business_plans')
           .update({ sections: updatedDoc as any })
           .eq('id', resultId)
@@ -131,7 +131,7 @@ export function useSectionRegeneration({
     });
 
     if (resultId && userId) {
-      await supabase
+      await getSupabase()
         .from('business_plans')
         .update({ sections: restoredDoc as any })
         .eq('id', resultId)
@@ -167,7 +167,7 @@ export function useSectionRegeneration({
       setSections(updatedSections);
 
       if (resultId && userId) {
-        await supabase
+        await getSupabase()
           .from('business_plans')
           .update({ sections: updatedSections as any })
           .eq('id', resultId)

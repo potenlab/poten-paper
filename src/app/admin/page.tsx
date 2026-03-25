@@ -17,7 +17,7 @@ import {
 import { toast } from 'sonner';
 
 import { useAuth } from '@/hooks/use-auth';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabase } from '@/lib/supabase/client';
 import {
   usePotenPaperAdminStats,
   usePotenPaperAdminList,
@@ -79,7 +79,7 @@ export default function AdminPage() {
       }
 
       // Check by profile role
-      const { data: profile } = await supabase
+      const { data: profile } = await getSupabase()
         .from('profiles')
         .select('role, username')
         .eq('id', user!.id)
@@ -128,7 +128,7 @@ export default function AdminPage() {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await getSupabase().auth.signOut();
     router.push('/poten-paper');
   };
 

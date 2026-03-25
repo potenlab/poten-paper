@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useRef } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabase } from '@/lib/supabase/client';
 import type { BusinessPlanDocument } from './types';
 
 interface UseImageGenerationParams {
@@ -19,7 +19,7 @@ export function useImageGeneration({ setDocument, planId }: UseImageGenerationPa
     async (updatedDoc: BusinessPlanDocument) => {
       if (!planId) return;
       try {
-        await supabase
+        await getSupabase()
           .from('business_plans')
           .update({ sections: updatedDoc as any })
           .eq('id', planId);

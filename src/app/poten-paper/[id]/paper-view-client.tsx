@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabase } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
@@ -66,7 +66,7 @@ export function PaperViewClient({ planId }: PaperViewClientProps) {
   const loadResult = async () => {
     setLoading(true);
     try {
-      const { data, error: fetchError } = await supabase
+      const { data, error: fetchError } = await getSupabase()
         .from('business_plans')
         .select('title, industry, sections, research_data, input_data, user_id, is_public')
         .eq('id', planId)
@@ -76,7 +76,7 @@ export function PaperViewClient({ planId }: PaperViewClientProps) {
 
       if (data) {
         // Check access: owner or public
-        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        const { data: { user: currentUser } } = await getSupabase().auth.getUser();
         const owner = !!currentUser && data.user_id === currentUser.id;
         if (!owner && !data.is_public) {
           setError('비공개 사업계획서입니다.');

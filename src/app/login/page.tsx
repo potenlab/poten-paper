@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabase } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { ScrollText } from 'lucide-react';
@@ -34,7 +34,7 @@ function LoginContent() {
 
   const handleOAuth = async (provider: 'google' | 'kakao') => {
     setLoading(provider);
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error } = await getSupabase().auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,

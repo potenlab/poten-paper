@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabase } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
 
 export function useAuth() {
@@ -10,7 +10,7 @@ export function useAuth() {
 
   useEffect(() => {
     // 1. getSession() for instant UI (reads from local storage, no network)
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    getSupabase().auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
     }).catch(() => {
@@ -19,7 +19,7 @@ export function useAuth() {
     });
 
     // 2. getUser() in background to validate server-side (corrects stale sessions)
-    supabase.auth.getUser().then(({ data: { user: validatedUser }, error }) => {
+    getSupabase().auth.getUser().then(({ data: { user: validatedUser }, error }) => {
       if (error) {
         setUser(null);
       } else {
@@ -31,7 +31,7 @@ export function useAuth() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = getSupabase().auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
 

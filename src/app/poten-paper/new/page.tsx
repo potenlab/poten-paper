@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabase } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { extractTextFromFile } from '@/lib/extract-text';
@@ -171,10 +171,10 @@ export default function PotenPaperNewPage() {
       if (user) {
         setProcessingPhase('generating');
         try {
-          const { data: { session } } = await supabase.auth.refreshSession();
+          const { data: { session } } = await getSupabase().auth.refreshSession();
           const uid = session?.user?.id || user.id;
 
-          const { data: inserted, error: insertError } = await supabase.from('business_plans').insert({
+          const { data: inserted, error: insertError } = await getSupabase().from('business_plans').insert({
             user_id: uid,
             title: result.title,
             industry: resultIndustry || null,
@@ -257,10 +257,10 @@ export default function PotenPaperNewPage() {
     setIsSaving(true);
     try {
       // Refresh session in case token expired during generation
-      const { data: { session } } = await supabase.auth.refreshSession();
+      const { data: { session } } = await getSupabase().auth.refreshSession();
       const uid = session?.user?.id || user.id;
 
-      const { data: inserted, error: insertError } = await supabase.from('business_plans').insert({
+      const { data: inserted, error: insertError } = await getSupabase().from('business_plans').insert({
         user_id: uid,
         title: resultTitle,
         industry: resultIndustry || null,
