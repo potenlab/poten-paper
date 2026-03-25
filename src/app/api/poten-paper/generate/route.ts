@@ -109,7 +109,53 @@ export async function POST(request: NextRequest) {
     // Load prompts from DB (with hardcoded fallback)
     const prompts = await getActivePrompts();
 
-    // Phase 1: Research
+    // Phase 0: Web Search (Serper API)
+    let webSearchContext = '';
+    if (process.env.SERPER_API_KEY) {
+      try {
+        // Extract search keywords from user input
+        const keywordsRaw = userInput.slice(0, 500);
+        const searchQueries = [
+          `${body.formData?.industry || ''} 시장규모 트렌드 2025 2026`,
+          `${body.formData?.businessName || body.title || ''} ${body.formData?.industry || ''} 경쟁사 분석`,
+          `${body.formData?.problemStatement || ''} 고객 니즈 통계`,
+        ].filter(q => q.trim().length > 5);
+
+        const searchResults = await Promise.all(
+          searchQueries.map(async (q) => {
+            const res = await fetch('https://google.serper.dev/search', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-API-KEY': process.env.SERPER_API_KEY!,
+              },
+              body: JSON.stringify({ q, gl: 'kr', hl: 'ko', num: 5 }),
+            });
+            if (!res.ok) return null;
+            return res.json();
+          })
+        );
+
+        const snippets: string[] = [];
+        for (const result of searchResults) {
+          if (!result) continue;
+          for (const item of (result.organic || []).slice(0, 3)) {
+            snippets.push(`[${item.title}] ${item.snippet || ''} (${item.link})`);
+          }
+          if (result.knowledgeGraph?.description) {
+            snippets.push(`[지식그래프] ${result.knowledgeGraph.description}`);
+          }
+        }
+
+        if (snippets.length > 0) {
+          webSearchContext = `\n\n<web-search-results>\n${snippets.join('\n')}\n</web-search-results>`;
+        }
+      } catch (e) {
+        console.error('Web search failed (continuing without):', e);
+      }
+    }
+
+    // Phase 1: Research (enhanced with web search data)
     const researchResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -122,7 +168,7 @@ export async function POST(request: NextRequest) {
         model: MODEL_ID,
         messages: [
           { role: 'system', content: prompts.research },
-          { role: 'user', content: `다음 사업 정보를 기반으로 시장 리서치를 수행해주세요:\n\n<business-input>\n${userInput}\n</business-input>` },
+          { role: 'user', content: `다음 사업 정보를 기반으로 시장 리서치를 수행해주세요:\n\n<business-input>\n${userInput}\n</business-input>${webSearchContext}` },
         ],
         temperature: 0.5,
         max_tokens: 8000,
