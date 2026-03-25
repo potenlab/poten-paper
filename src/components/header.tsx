@@ -19,7 +19,7 @@ export function Header() {
       <div className="max-w-[1156px] mx-auto px-4 sm:px-8 xl:px-[62px] h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 text-foreground font-bold text-lg">
           <ScrollText className="w-5 h-5" style={{ color: '#0EA5E9' }} />
-          포텐
+          포텐페이퍼
         </Link>
 
         <nav className="flex items-center gap-1">
