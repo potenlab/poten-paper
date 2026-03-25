@@ -147,7 +147,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Phase 2: Generation
+    const now = new Date();
+    const currentDate = `${now.getFullYear()}년 ${now.getMonth() + 1}월`;
+
     const generationPrompt = `다음 사업 정보와 리서치 결과를 기반으로 청년창업사관학교 양식의 사업계획서를 작성해주세요.
+오늘 날짜: ${currentDate} (cover.date에 이 날짜를 사용하세요)
 
 <business-input>
 ${userInput}

@@ -156,7 +156,7 @@ visualization 객체 형식: {"type":"타입","title":"제목","data": ...}
   "cover": {
     "businessName": "사업명/회사명",
     "subtitle": "한 줄 소개",
-    "date": "2025년 1월"
+    "date": "작성 시점의 연월 (예: 2026년 3월)"
   },
   "sections": [
     {
