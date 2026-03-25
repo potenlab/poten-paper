@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { getSupabase } from '@/lib/supabase/client';
-import { ScrollText, LogIn, LogOut, User } from 'lucide-react';
+import { ScrollText, LogIn, LogOut, User, ClipboardCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function Header() {
@@ -17,10 +17,19 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
       <div className="max-w-[1156px] mx-auto px-4 sm:px-8 xl:px-[62px] h-14 flex items-center justify-between">
-        <Link href="/poten-paper" className="flex items-center gap-2 text-foreground font-bold text-lg">
+        <Link href="/" className="flex items-center gap-2 text-foreground font-bold text-lg">
           <ScrollText className="w-5 h-5" style={{ color: '#0EA5E9' }} />
-          포텐페이퍼
+          포텐
         </Link>
+
+        <nav className="flex items-center gap-1">
+          <Link href="/poten-paper">
+            <Button variant="ghost" size="sm" className="text-sm">페이퍼</Button>
+          </Link>
+          <Link href="/poten-checker">
+            <Button variant="ghost" size="sm" className="text-sm">체커</Button>
+          </Link>
+        </nav>
 
         <div className="flex items-center gap-2">
           {loading ? (
@@ -30,7 +39,7 @@ export function Header() {
               <Link href="/poten-paper/my">
                 <Button variant="ghost" size="sm" className="gap-1.5 text-sm">
                   <User className="w-4 h-4" />
-                  내 사업계획서
+                  마이페이지
                 </Button>
               </Link>
               <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-1.5 text-sm text-muted-foreground">
