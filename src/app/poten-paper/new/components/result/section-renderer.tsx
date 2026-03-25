@@ -4,6 +4,7 @@ import { BRAND_COLOR } from '@/lib/poten-paper/constants';
 import type { MainSection, SubSection, SubSubSection } from '@/lib/poten-paper/types';
 import { SafeMarkdown } from '@/lib/poten-paper/safe-markdown';
 import { ChartRenderer } from '../charts/chart-renderer';
+import { VisualizationRenderer } from '../visualizations/visualization-renderer';
 
 // ── Content block types ──────────────────────────────────────────────
 
@@ -156,6 +157,12 @@ export function ContentBlockRenderer({
           {sss.chart && (
             <div className="mt-3 mb-2">
               <ChartRenderer chart={sss.chart} />
+            </div>
+          )}
+
+          {sss.visualization && (
+            <div className="mt-3 mb-2">
+              <VisualizationRenderer visualization={sss.visualization} />
             </div>
           )}
 

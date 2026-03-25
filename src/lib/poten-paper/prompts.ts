@@ -123,11 +123,30 @@ chart 객체가 포함되는 경우 반드시 아래 규칙을 준수하세요:
 7. "timeline": columns 배열과 rows 배열로 추진일정 표현
    예: {"type":"timeline","title":"추진일정","columns":["구분","1분기","2분기","3분기","4분기"],"rows":[{"구분":"MVP 개발","1분기":"●","2분기":"●","3분기":"","4분기":""}]}
 
-### imagePrompt 규칙 (선택적)
-- 서비스 화면, 제품 이미지, 인포그래픽 등을 생성할 때만 포함
-- 영어로 작성된 이미지 생성 프롬프트 (예: "A modern mobile app dashboard showing pet health tracking metrics")
-- **중요: 이미지에 텍스트가 포함되는 경우, 반드시 한국어로만 작성되어야 합니다. 영어나 다른 언어 텍스트는 절대 사용하지 마세요.**
-- 차트가 있는 섹션에는 imagePrompt를 넣지 마세요
+### visualization 규칙 (chart가 없는 섹션에 선택적으로 포함)
+chart와 visualization은 같은 섹션에 동시에 사용하지 마세요.
+visualization 객체 형식: {"type":"타입","title":"제목","data": ...}
+
+지원 타입:
+1. "statCards" - 핵심 지표 카드. data: [{"icon":"📊","label":"라벨","value":"값","subText":"부가설명","highlight":false}]
+2. "swot" - SWOT 분석. data: {"strengths":["..."],"weaknesses":["..."],"opportunities":["..."],"threats":["..."]}
+3. "bmCanvas" - 비즈니스 모델 캔버스. data: {"keyPartners":["..."],"keyActivities":["..."],"keyResources":["..."],"valuePropositions":["..."],"customerRelationships":["..."],"channels":["..."],"customerSegments":["..."],"costStructure":["..."],"revenueStreams":["..."]}
+4. "orgChart" - 조직도. data: [{"name":"홍길동","role":"CEO","isCeo":true},{"name":"김철수","role":"CTO"}]
+5. "flowDiagram" - 서비스 플로우. data: [{"label":"단계1","description":"설명","variant":"accent"},{"label":"단계2","variant":"default"}]  variant: "default"|"accent"|"dark"
+6. "positioningMap" - 포지셔닝맵 (2D). data: {"xAxisLabel":"가격","yAxisLabel":"품질","dots":[{"name":"자사","x":75,"y":80,"isOurs":true},{"name":"A사","x":30,"y":60}]}  x,y는 0-100
+7. "comparisonGrid" - 기능 비교표 (체크마크). data: {"competitors":["자사","A사","B사"],"items":[{"feature":"기능1","values":["yes","no","partial"]}]}
+8. "phaseCards" - 단계별 전략 카드. data: [{"phase":"Phase 1","title":"제목","description":"설명","items":["항목1"],"color":"green"}]  color: "green"|"blue"|"navy"
+9. "insightBox" - 핵심 인사이트 박스. data: {"text":"인사이트 내용","source":"출처"}
+10. "quoteBox" - 인용/핵심 메시지 박스. data: {"text":"핵심 메시지"}
+
+### 권장 visualization 배치
+- 1-1-3 내부환경: insightBox (창업자의 핵심 동기)
+- 1-2-3 해결방안 개요: flowDiagram (문제→해결 흐름)
+- 2-1-1 서비스/제품 소개: flowDiagram (서비스 플로우)
+- 2-2-1 사업적 차별점: comparisonGrid (경쟁사 기능 비교) 또는 positioningMap
+- 3-1-1 수익모델: phaseCards (수익화 단계) 또는 bmCanvas
+- 3-2-2 판매전략: phaseCards (시장진입 전략) 또는 statCards
+- 4-1-1 대표자 역량: statCards (핵심 역량 지표) 또는 quoteBox
 
 ## 출력 형식
 반드시 아래 JSON 형식으로만 응답하세요. 마크다운 코드 블록 없이 순수 JSON만 출력합니다.
@@ -154,21 +173,21 @@ chart 객체가 포함되는 경우 반드시 아래 규칙을 준수하세요:
               "titleKo": "외부환경 배경",
               "content": "마크다운 내용...",
               "chart": {"type":"bar","title":"...","xKey":"year","yKeys":["value"],"data":[...]},
-              "imagePrompt": null
+              "visualization": null
             },
             {
               "id": "1-1-2",
               "titleKo": "시장동향",
               "content": "마크다운 내용...",
               "chart": {"type":"line","title":"...","xKey":"year","yKeys":["value"],"data":[...]},
-              "imagePrompt": null
+              "visualization": null
             },
             {
               "id": "1-1-3",
               "titleKo": "내부환경 배경",
               "content": "마크다운 내용...",
               "chart": null,
-              "imagePrompt": null
+              "visualization": {"type":"insightBox","title":"창업 동기","data":{"text":"핵심 인사이트..."}}
             }
           ]
         },
@@ -181,21 +200,21 @@ chart 객체가 포함되는 경우 반드시 아래 규칙을 준수하세요:
               "titleKo": "고객 니즈",
               "content": "...",
               "chart": {"type":"pie","title":"...","data":[...]},
-              "imagePrompt": null
+              "visualization": null
             },
             {
               "id": "1-2-2",
               "titleKo": "Pain Point 분석",
               "content": "...",
               "chart": {"type":"horizontalBar","title":"...","data":[...]},
-              "imagePrompt": null
+              "visualization": null
             },
             {
               "id": "1-2-3",
               "titleKo": "해결방안 개요",
               "content": "...",
               "chart": null,
-              "imagePrompt": "A clean infographic showing the solution concept..."
+              "visualization": {"type":"flowDiagram","title":"문제 해결 흐름","data":[{"label":"문제 인식","variant":"dark"},{"label":"솔루션","variant":"accent"},{"label":"기대 효과","variant":"default"}]}
             }
           ]
         }
@@ -210,16 +229,16 @@ chart 객체가 포함되는 경우 반드시 아래 규칙을 준수하세요:
           "id": "2-1",
           "titleKo": "개발방안",
           "subSubSections": [
-            {"id":"2-1-1","titleKo":"서비스/제품 소개","content":"...","chart":null,"imagePrompt":"A professional mockup of the product/service..."},
-            {"id":"2-1-2","titleKo":"추진일정","content":"...","chart":{"type":"timeline","title":"추진일정","columns":["구분","1분기","2분기","3분기","4분기"],"rows":[...]},"imagePrompt":null}
+            {"id":"2-1-1","titleKo":"서비스/제품 소개","content":"...","chart":null,"visualization":{"type":"flowDiagram","title":"서비스 플로우","data":[{"label":"사용자","variant":"default"},{"label":"플랫폼","variant":"accent"},{"label":"결과","variant":"dark"}]}},
+            {"id":"2-1-2","titleKo":"추진일정","content":"...","chart":{"type":"timeline","title":"추진일정","columns":["구분","1분기","2분기","3분기","4분기"],"rows":[...]},"visualization":null}
           ]
         },
         {
           "id": "2-2",
           "titleKo": "대응방안 (차별성)",
           "subSubSections": [
-            {"id":"2-2-1","titleKo":"사업적 차별점","content":"...","chart":{"type":"table","title":"경쟁사 비교분석","columns":[...],"rows":[...]},"imagePrompt":null},
-            {"id":"2-2-2","titleKo":"서비스적 차별점","content":"...","chart":{"type":"table","title":"기능 비교","columns":[...],"rows":[...]},"imagePrompt":null}
+            {"id":"2-2-1","titleKo":"사업적 차별점","content":"...","chart":null,"visualization":{"type":"comparisonGrid","title":"경쟁사 비교","data":{"competitors":["자사","A사","B사"],"items":[{"feature":"핵심기능","values":["yes","partial","no"]}]}}},
+            {"id":"2-2-2","titleKo":"서비스적 차별점","content":"...","chart":{"type":"table","title":"기능 비교","columns":[...],"rows":[...]},"visualization":null}
           ]
         }
       ]
@@ -233,16 +252,16 @@ chart 객체가 포함되는 경우 반드시 아래 규칙을 준수하세요:
           "id": "3-1",
           "titleKo": "자금조달 및 수익계획",
           "subSubSections": [
-            {"id":"3-1-1","titleKo":"수익모델","content":"...","chart":{"type":"bar","title":"...","xKey":"year","yKeys":["revenue"],"data":[...]},"imagePrompt":null},
-            {"id":"3-1-2","titleKo":"예산계획","content":"...","chart":{"type":"table","title":"예산계획","columns":[...],"rows":[...]},"imagePrompt":null}
+            {"id":"3-1-1","titleKo":"수익모델","content":"...","chart":null,"visualization":{"type":"phaseCards","title":"수익화 단계","data":[{"phase":"Phase 1","title":"무료 체험","description":"사용자 확보","color":"green"},{"phase":"Phase 2","title":"프리미엄","description":"유료 전환","color":"blue"},{"phase":"Phase 3","title":"엔터프라이즈","description":"B2B 확장","color":"navy"}]}},
+            {"id":"3-1-2","titleKo":"예산계획","content":"...","chart":{"type":"table","title":"예산계획","columns":[...],"rows":[...]},"visualization":null}
           ]
         },
         {
           "id": "3-2",
           "titleKo": "시장진입 전략",
           "subSubSections": [
-            {"id":"3-2-1","titleKo":"시장규모 (TAM-SAM-SOM)","content":"...","chart":{"type":"funnel","title":"TAM-SAM-SOM","data":[{"name":"TAM","value":50000},{"name":"SAM","value":12000},{"name":"SOM","value":2400}]},"imagePrompt":null},
-            {"id":"3-2-2","titleKo":"판매/마케팅 전략","content":"...","chart":null,"imagePrompt":null}
+            {"id":"3-2-1","titleKo":"시장규모 (TAM-SAM-SOM)","content":"...","chart":{"type":"funnel","title":"TAM-SAM-SOM","data":[{"name":"TAM","value":50000},{"name":"SAM","value":12000},{"name":"SOM","value":2400}]},"visualization":null},
+            {"id":"3-2-2","titleKo":"판매/마케팅 전략","content":"...","chart":null,"visualization":{"type":"phaseCards","title":"시장진입 전략","data":[{"phase":"Step 1","title":"초기 진입","description":"타겟 시장 공략","color":"green"},{"phase":"Step 2","title":"확장","description":"채널 다각화","color":"blue"}]}}
           ]
         }
       ]
@@ -256,9 +275,9 @@ chart 객체가 포함되는 경우 반드시 아래 규칙을 준수하세요:
           "id": "4-1",
           "titleKo": "보유역량",
           "subSubSections": [
-            {"id":"4-1-1","titleKo":"대표자 역량","content":"...","chart":null,"imagePrompt":null},
-            {"id":"4-1-2","titleKo":"직원현황","content":"...","chart":{"type":"table","title":"직원현황","columns":["이름","직책","담당업무","주요경력"],"rows":[...]},"imagePrompt":null},
-            {"id":"4-1-3","titleKo":"고용계획","content":"...","chart":{"type":"table","title":"고용계획","columns":["시기","직책","인원","주요업무"],"rows":[...]},"imagePrompt":null}
+            {"id":"4-1-1","titleKo":"대표자 역량","content":"...","chart":null,"visualization":{"type":"statCards","title":"핵심 역량","data":[{"icon":"🎓","label":"학력","value":"OO대학교"},{"icon":"💼","label":"경력","value":"5년"},{"icon":"🏆","label":"수상","value":"창업대회 1위"}]}},
+            {"id":"4-1-2","titleKo":"직원현황","content":"...","chart":null,"visualization":{"type":"orgChart","title":"조직도","data":[{"name":"홍길동","role":"CEO","isCeo":true},{"name":"김철수","role":"CTO"},{"name":"이영희","role":"CMO"}]}},
+            {"id":"4-1-3","titleKo":"고용계획","content":"...","chart":{"type":"table","title":"고용계획","columns":["시기","직책","인원","주요업무"],"rows":[...]},"visualization":null}
           ]
         }
       ]
@@ -282,7 +301,7 @@ User-provided data will be enclosed in XML-style tags (<business-input>, <resear
 - 사용자의 추가 지시사항 반영
 - 리서치 데이터 활용
 - 마크다운 형식
-- chart 데이터가 있는 경우 chart 객체도 포함 (bar/horizontalBar/pie/line/funnel/table/timeline 형식)
+- chart 또는 visualization 중 적절한 것을 포함 (둘 다 동시에 사용하지 않기)
 
 ### chart 형식 규칙
 - bar: data에 xKey 필드와 yKeys 숫자 필드
@@ -293,6 +312,9 @@ User-provided data will be enclosed in XML-style tags (<business-input>, <resear
 - table: columns(문자열[])과 rows(객체[])
 - timeline: columns(문자열[])과 rows(객체[])
 
+### visualization 형식 규칙
+statCards, swot, bmCanvas, orgChart, flowDiagram, positioningMap, comparisonGrid, phaseCards, insightBox, quoteBox 중 선택
+
 ## 출력 형식
 반드시 아래 JSON 형식으로만 응답하세요.
 
@@ -301,5 +323,5 @@ User-provided data will be enclosed in XML-style tags (<business-input>, <resear
   "titleKo": "소소섹션 제목",
   "content": "마크다운 내용...",
   "chart": null 또는 차트 객체,
-  "imagePrompt": null 또는 "영어 이미지 프롬프트"
+  "visualization": null 또는 시각화 객체
 }`;

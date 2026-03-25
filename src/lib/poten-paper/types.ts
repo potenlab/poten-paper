@@ -41,11 +41,112 @@ export interface ChartData {
   rows?: Record<string, string | number>[];
 }
 
+// ── HTML 시각화 타입 ────────────────────────────────────────────────
+
+export type VisualizationType =
+  | 'statCards'
+  | 'swot'
+  | 'bmCanvas'
+  | 'orgChart'
+  | 'flowDiagram'
+  | 'positioningMap'
+  | 'comparisonGrid'
+  | 'phaseCards'
+  | 'insightBox'
+  | 'quoteBox';
+
+export interface StatCard {
+  icon?: string;
+  label: string;
+  value: string;
+  subText?: string;
+  highlight?: boolean;
+}
+
+export interface SwotData {
+  strengths: string[];
+  weaknesses: string[];
+  opportunities: string[];
+  threats: string[];
+}
+
+export interface BmCanvasData {
+  keyPartners: string[];
+  keyActivities: string[];
+  keyResources: string[];
+  valuePropositions: string[];
+  customerRelationships: string[];
+  channels: string[];
+  customerSegments: string[];
+  costStructure: string[];
+  revenueStreams: string[];
+}
+
+export interface OrgChartMember {
+  name: string;
+  role: string;
+  isCeo?: boolean;
+}
+
+export interface FlowStep {
+  label: string;
+  description?: string;
+  variant?: 'default' | 'accent' | 'dark';
+}
+
+export interface PositionDot {
+  name: string;
+  x: number; // 0-100
+  y: number; // 0-100
+  isOurs?: boolean;
+}
+
+export interface PositioningMapData {
+  xAxisLabel: string;
+  yAxisLabel: string;
+  dots: PositionDot[];
+}
+
+export interface ComparisonItem {
+  feature: string;
+  values: ('yes' | 'no' | 'partial')[];
+}
+
+export interface ComparisonGridData {
+  competitors: string[];
+  items: ComparisonItem[];
+}
+
+export interface PhaseCard {
+  phase: string;
+  title: string;
+  description: string;
+  items?: string[];
+  color?: 'green' | 'blue' | 'navy';
+}
+
+export interface VisualizationData {
+  type: VisualizationType;
+  title: string;
+  data:
+    | StatCard[]           // statCards
+    | SwotData             // swot
+    | BmCanvasData         // bmCanvas
+    | OrgChartMember[]     // orgChart
+    | FlowStep[]           // flowDiagram
+    | PositioningMapData   // positioningMap
+    | ComparisonGridData   // comparisonGrid
+    | PhaseCard[]          // phaseCards
+    | { text: string; source?: string }  // insightBox, quoteBox
+    ;
+}
+
 export interface SubSubSection {
   id: string;
   titleKo: string;
   content: string;
   chart?: ChartData | null;
+  visualization?: VisualizationData | null;
   imagePrompt?: string | null;
   imageUrl?: string | null;
 }
