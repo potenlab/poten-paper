@@ -75,12 +75,6 @@ export default function MyPlansPage() {
     <div className="max-w-[800px] mx-auto px-4 sm:px-8 py-10">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-foreground">내 사업계획서</h1>
-        <Link href="/poten-paper/new">
-          <Button size="sm" className="gap-1.5" style={{ backgroundColor: '#0EA5E9' }}>
-            <Plus className="w-4 h-4" />
-            새로 만들기
-          </Button>
-        </Link>
       </div>
 
       {plans.length === 0 ? (
