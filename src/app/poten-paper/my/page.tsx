@@ -3,10 +3,25 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
+import { useUserCredits } from '@/hooks/use-user-credits';
+import { useActiveSubscription } from '@/hooks/use-subscription';
+import { useFeatureAccess } from '@/hooks/use-feature-access';
 import { getSupabase } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
-import { FileText, Plus, Trash2, Calendar, Loader2 } from 'lucide-react';
+import {
+  FileText,
+  Trash2,
+  Calendar,
+  Loader2,
+  Coins,
+  Crown,
+  Zap,
+  ExternalLink,
+} from 'lucide-react';
 import Link from 'next/link';
+
+const BRAND_COLOR = '#0EA5E9';
+const THE_POTENTIAL_URL = 'https://the-potential.co';
 
 interface SavedPlan {
   id: string;
@@ -15,6 +30,145 @@ interface SavedPlan {
   status: string;
   created_at: string;
 }
+
+// ── 크레딧 & 구독 상태 카드 ──
+
+function StatusCards({ userId }: { userId: string }) {
+  const { data: credits } = useUserCredits(userId);
+  const { data: subscription, isLoading: subLoading } = useActiveSubscription(userId);
+  const { isMember, remaining, limit, freeRemaining, freeLimit } =
+    useFeatureAccess('poten_paper');
+
+  const balance = credits?.balance ?? 0;
+  const isSub = !!subscription;
+
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      {/* 구독 상태 */}
+      <div className="bg-card border border-border rounded-2xl p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: isSub ? `${BRAND_COLOR}15` : '#f3f4f6' }}
+          >
+            <Crown
+              className="w-4 h-4"
+              style={{ color: isSub ? BRAND_COLOR : '#9ca3af' }}
+            />
+          </div>
+          <span className="text-sm font-medium text-muted-foreground">구독</span>
+        </div>
+        {subLoading ? (
+          <div className="h-6 w-20 bg-muted/30 rounded animate-pulse" />
+        ) : isSub ? (
+          <>
+            <p className="text-lg font-bold text-foreground capitalize">
+              {subscription!.plan} 플랜
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {formatDate(subscription!.expires_at)}까지
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="text-lg font-bold text-muted-foreground">미구독</p>
+            <a
+              href={`${THE_POTENTIAL_URL}/membership`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs mt-1 hover:underline"
+              style={{ color: BRAND_COLOR }}
+            >
+              구독하기 <ExternalLink className="w-3 h-3" />
+            </a>
+          </>
+        )}
+      </div>
+
+      {/* 크레딧 잔액 */}
+      <div className="bg-card border border-border rounded-2xl p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-500/10">
+            <Coins className="w-4 h-4 text-amber-500" />
+          </div>
+          <span className="text-sm font-medium text-muted-foreground">크레딧</span>
+        </div>
+        <p className="text-lg font-bold text-foreground">
+          {balance.toLocaleString()}
+          <span className="text-sm font-normal text-muted-foreground ml-1">C</span>
+        </p>
+        <a
+          href={`${THE_POTENTIAL_URL}/mypage`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-xs text-muted-foreground mt-1 hover:underline"
+        >
+          더포텐셜에서 적립 <ExternalLink className="w-3 h-3" />
+        </a>
+      </div>
+
+      {/* 페이퍼 사용량 */}
+      <div className="bg-card border border-border rounded-2xl p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: '#8b5cf615' }}
+          >
+            <Zap className="w-4 h-4 text-violet-500" />
+          </div>
+          <span className="text-sm font-medium text-muted-foreground">이용권</span>
+        </div>
+        {isMember ? (
+          <>
+            <p className="text-lg font-bold text-foreground">
+              {remaining}
+              <span className="text-sm font-normal text-muted-foreground">
+                /{limit}회 남음
+              </span>
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">이번 결제 주기</p>
+            {/* 프로그레스 바 */}
+            <div className="mt-2 h-1.5 rounded-full bg-muted/30 overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${(remaining / limit) * 100}%`,
+                  backgroundColor: BRAND_COLOR,
+                }}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="text-lg font-bold text-foreground">
+              {freeRemaining}
+              <span className="text-sm font-normal text-muted-foreground">
+                /{freeLimit}회 남음
+              </span>
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">무료 체험</p>
+            <div className="mt-2 h-1.5 rounded-full bg-muted/30 overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${(freeRemaining / freeLimit) * 100}%`,
+                  backgroundColor: freeRemaining > 0 ? '#22c55e' : '#ef4444',
+                }}
+              />
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── 메인 페이지 ──
 
 export default function MyPlansPage() {
   const { user, loading: authLoading } = useAuth();
@@ -77,12 +231,15 @@ export default function MyPlansPage() {
         <h1 className="text-2xl font-bold text-foreground">내 사업계획서</h1>
       </div>
 
+      {/* 크레딧 & 구독 & 사용량 */}
+      {user && <StatusCards userId={user.id} />}
+
       {plans.length === 0 ? (
         <div className="text-center py-20">
           <FileText className="w-12 h-12 mx-auto mb-4 text-muted-foreground/30" />
           <p className="text-muted-foreground mb-4">아직 작성한 사업계획서가 없습니다.</p>
           <Link href="/poten-paper/new">
-            <Button style={{ backgroundColor: '#0EA5E9' }} className="text-white">
+            <Button style={{ backgroundColor: BRAND_COLOR }} className="text-white">
               첫 사업계획서 만들기
             </Button>
           </Link>

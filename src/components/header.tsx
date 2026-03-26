@@ -2,9 +2,26 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
+import { useUserCredits } from '@/hooks/use-user-credits';
 import { getSupabase } from '@/lib/supabase/client';
-import { ScrollText, LogIn, LogOut, User, ClipboardCheck } from 'lucide-react';
+import { ScrollText, LogIn, LogOut, User, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+function CreditBadge({ userId }: { userId: string }) {
+  const { data } = useUserCredits(userId);
+  const balance = data?.balance ?? 0;
+
+  return (
+    <Link href="/poten-paper/my">
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/15 transition-colors text-sm">
+        <Coins className="w-3.5 h-3.5 text-amber-500" />
+        <span className="font-semibold text-amber-600 dark:text-amber-400">
+          {balance.toLocaleString()}
+        </span>
+      </span>
+    </Link>
+  );
+}
 
 export function Header() {
   const { user, loading } = useAuth();
@@ -36,6 +53,7 @@ export function Header() {
             <div className="w-20 h-8 bg-muted/30 rounded-lg animate-pulse" />
           ) : user ? (
             <>
+              <CreditBadge userId={user.id} />
               <Link href="/poten-paper/my">
                 <Button variant="ghost" size="sm" className="gap-1.5 text-sm">
                   <User className="w-4 h-4" />
