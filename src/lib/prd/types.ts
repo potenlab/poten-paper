@@ -126,6 +126,7 @@ export interface FeatureSpec {
   operationalPolicy: {
     content: string;
   };
+  uiPreviewHtml?: string;
 }
 
 // ── Full PRD Document ────────────────────────────────────────────────

@@ -1047,6 +1047,58 @@ export interface Database {
           }
         ];
       };
+      prd_documents: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          input_type: string;
+          input_data: Json;
+          document: Json;
+          analysis_data: Json;
+          status: string;
+          is_public: boolean;
+          error_message: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          input_type: string;
+          input_data: Json;
+          document: Json;
+          analysis_data?: Json;
+          status?: string;
+          is_public?: boolean;
+          error_message?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          title?: string;
+          input_type?: string;
+          input_data?: Json;
+          document?: Json;
+          analysis_data?: Json;
+          status?: string;
+          is_public?: boolean;
+          error_message?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'prd_documents_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       follows: {
         Row: {
           id: number;

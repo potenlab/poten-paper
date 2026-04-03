@@ -63,15 +63,16 @@ SITE_URL
 이 레포를 PotenKit(IT 기획 도구 통합 플랫폼)으로 확장 중. potenlab 레포에서 도구를 이식하는 중.
 
 ### 이식 대상 (potenlab → 여기)
-1. **PRD 생성기** (진행중)
+1. **PRD 생성기** (이식 완료)
    - ✅ lib 복사 완료: `src/lib/prd/` (types, constants, prompts, extract-text, normalize-document, parse-json, pdf-export, safe-markdown)
    - ✅ 컴포넌트 복사 완료: `src/app/prd/new/components/` (ProgressIndicator, StepForm, StepInputMethod, StepUpload, StepProcessing, ImageUpload, result/*)
-   - ❌ 남은 작업:
-     - 컴포넌트 import 경로 변경 (`@/lib/prd/...`으로 통일) + `'use client'` 추가
-     - API 라우트 변환: potenlab `api/prd-generate.ts`, `api/prd-modify.ts` → Next.js `app/api/prd/generate/route.ts`, `app/api/prd/modify/route.ts`
-     - 페이지 생성: `app/prd/new/page.tsx`, `app/prd/[id]/page.tsx`, `app/prd/my/page.tsx`
-     - Supabase 클라이언트 교체: potenlab의 `supabase` → 여기 `getSupabase()`
-     - 필요 패키지 확인/설치 (sonner, framer-motion 등)
+   - ✅ `'use client'` 추가 완료 (StepForm, StepInputMethod, StepUpload, ImageUpload, PrdResultLayout, InsightPanel, DocumentToolbar, DocumentViewer)
+   - ✅ API 라우트 생성 완료: `app/api/prd/generate/route.ts`, `app/api/prd/modify/route.ts`
+   - ✅ 페이지 생성 완료: `app/prd/new/page.tsx`, `app/prd/[id]/page.tsx` (+prd-view-client.tsx), `app/prd/my/page.tsx`
+   - ✅ Supabase 클라이언트: `getSupabase()` 사용 (prd_documents 테이블은 DB에 별도 생성 필요)
+   - ✅ 필요 패키지 모두 설치 확인 (sonner, framer-motion, pdfjs-dist, mammoth 등)
+   - ✅ Supabase `prd_documents` 테이블 생성 완료 (RLS 포함)
+   - ✅ Supabase 타입 추가 + `as any` 캐스팅 제거 완료
 2. **견적기** (미시작)
 3. **UI Builder** (미시작)
 
