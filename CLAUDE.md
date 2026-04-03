@@ -59,6 +59,49 @@ OPENROUTER_API_KEY
 SITE_URL
 ```
 
+## PotenKit 통합 (진행중)
+이 레포를 PotenKit(IT 기획 도구 통합 플랫폼)으로 확장 중. potenlab 레포에서 도구를 이식하는 중.
+
+### 이식 대상 (potenlab → 여기)
+1. **PRD 생성기** (진행중)
+   - ✅ lib 복사 완료: `src/lib/prd/` (types, constants, prompts, extract-text, normalize-document, parse-json, pdf-export, safe-markdown)
+   - ✅ 컴포넌트 복사 완료: `src/app/prd/new/components/` (ProgressIndicator, StepForm, StepInputMethod, StepUpload, StepProcessing, ImageUpload, result/*)
+   - ❌ 남은 작업:
+     - 컴포넌트 import 경로 변경 (`@/lib/prd/...`으로 통일) + `'use client'` 추가
+     - API 라우트 변환: potenlab `api/prd-generate.ts`, `api/prd-modify.ts` → Next.js `app/api/prd/generate/route.ts`, `app/api/prd/modify/route.ts`
+     - 페이지 생성: `app/prd/new/page.tsx`, `app/prd/[id]/page.tsx`, `app/prd/my/page.tsx`
+     - Supabase 클라이언트 교체: potenlab의 `supabase` → 여기 `getSupabase()`
+     - 필요 패키지 확인/설치 (sonner, framer-motion 등)
+2. **견적기** (미시작)
+3. **UI Builder** (미시작)
+
+### PotenKit 구조 계획
+```
+src/app/
+  ├── page.tsx              ← PotenKit 랜딩 (IT기획 홈)
+  ├── business/             ← 사업기획 (포텐페이퍼+체커)
+  ├── poten-paper/          ← 기존 유지
+  ├── poten-checker/        ← 기존 유지
+  ├── prd/                  ← potenlab에서 이식
+  │   ├── new/              ← PRD 생성
+  │   ├── [id]/             ← PRD 결과 보기
+  │   └── my/               ← 내 PRD 목록
+  ├── estimator/            ← 이식 예정
+  ├── ui-builder/           ← 이식 예정
+  ├── my/                   ← 통합 마이페이지 (전체 문서)
+  └── api/
+      ├── poten-paper/      ← 기존
+      ├── prd/              ← 이식
+      ├── estimator/        ← 이식 예정
+      └── ui-builder/       ← 이식 예정
+```
+
+### 브랜드
+- 서비스명: PotenKit (포텐킷)
+- 컨셉: "아이디어에서 실행까지, 궁극의 IT 기획 키트"
+- 포텐랩 하위 브랜드, 나중에 독립 도메인/레포로 분리 예정
+- 계정: Supabase Auth 통합 (더포텐셜/포텐랩/포텐킷 공유)
+
 ## 참고
 - Supabase 클라이언트는 모듈 레벨 싱글톤이 아닌 `getSupabase()` lazy 초기화 사용 (빌드 시 SSR prerender 에러 방지)
 - PDF 파일은 .gitignore로 제외됨
