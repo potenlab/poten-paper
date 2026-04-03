@@ -107,3 +107,4 @@ src/app/
 - Supabase 클라이언트는 모듈 레벨 싱글톤이 아닌 `getSupabase()` lazy 초기화 사용 (빌드 시 SSR prerender 에러 방지)
 - PDF 파일은 .gitignore로 제외됨
 - 한국어로 대화
+- 최종 빌드 확인: 2026-04-03 통과
