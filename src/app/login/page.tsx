@@ -5,9 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { getSupabase } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { ScrollText } from 'lucide-react';
-
-const BRAND_COLOR = '#0EA5E9';
+import { Sparkles } from 'lucide-react';
 
 export default function LoginPage() {
   return (
@@ -51,15 +49,12 @@ function LoginContent() {
       <div className="w-full max-w-sm space-y-8">
         {/* Logo */}
         <div className="text-center">
-          <div
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
-            style={{ backgroundColor: `${BRAND_COLOR}15` }}
-          >
-            <ScrollText className="w-8 h-8" style={{ color: BRAND_COLOR }} />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 bg-gradient-to-br from-[#0079FF]/15 to-[#14A697]/15">
+            <Sparkles className="w-8 h-8 text-[#0079FF]" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">포텐페이퍼</h1>
+          <h1 className="text-2xl font-bold text-foreground">PotenKit</h1>
           <p className="text-sm text-muted mt-2">
-            로그인하고 AI 사업계획서를 만들어 보세요
+            로그인하고 IT 기획 도구를 시작하세요
           </p>
         </div>
 
@@ -123,7 +118,7 @@ function LoginContent() {
         {/* Back */}
         <div className="text-center">
           <button
-            onClick={() => router.push('/poten-paper')}
+            onClick={() => router.push('/')}
             className="text-sm text-muted hover:text-foreground transition-colors"
           >
             홈으로 돌아가기
