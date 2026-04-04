@@ -1,8 +1,5 @@
-'use client';
-
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useRouter } from '../contexts/RouterContext';
 import {
   Sparkles, FileText, DollarSign, ListChecks, Layout, ClipboardCheck, Briefcase,
   ArrowRight, Globe, Target, Zap, GraduationCap
@@ -27,48 +24,42 @@ const translations = {
           title: 'AI PRD 생성',
           description: 'AI가 여러분의 아이디어를 분석해 제품 요구사항 문서를 자동으로 작성합니다.',
           status: 'active',
-          route: '/prd/new'
+          route: 'potenkit-prd-new'
         },
         {
           badge: '2단계',
           title: '실시간 견적',
           description: '개발 시간과 난이도를 분석해 투명한 비용을 바로 확인할 수 있습니다.',
-          status: 'coming',
-          route: null
+          status: 'active',
+          route: 'potenkit-estimator'
         },
         {
           badge: '3단계',
           title: '기능 명세서',
           description: '개발팀에 바로 전달 가능한 상세한 기능 명세서가 자동으로 만들어집니다.',
-          status: 'coming',
-          route: null
+          status: 'coming'
         },
         {
           badge: '4단계',
           title: 'AI 와이어프레임',
           description: 'AI가 화면 구성과 사용자 흐름을 시각적으로 만들어줍니다.',
-          status: 'coming',
-          route: null
+          status: 'active',
+          route: 'potenkit-ui-builder'
         },
         {
           badge: '5단계',
           title: '화면설계서',
           description: '각 화면의 기능 명세와 상세 설명이 포함된 정식 설계 문서를 생성합니다.',
-          status: 'coming',
-          route: null
+          status: 'coming'
         },
         {
           badge: '6단계',
           title: '개발 & 구축',
           description: '완성된 기획을 바탕으로 실제 서비스를 개발하고 구축합니다.',
           status: 'active',
-          route: null
+          route: 'contact'
         }
       ]
-    },
-    nav: {
-      itPlanning: 'IT 기획',
-      businessPlanning: '사업 기획'
     },
     value: {
       title: '기획은 고객이, 개발은 우리가',
@@ -130,48 +121,42 @@ const translations = {
           title: 'AI PRD Generation',
           description: 'AI analyzes your idea and automatically creates a Product Requirement Document.',
           status: 'active',
-          route: '/prd/new'
+          route: 'potenkit-prd-new'
         },
         {
           badge: 'Step 2',
           title: 'Instant Quote',
           description: 'Get transparent pricing instantly based on development time and complexity.',
-          status: 'coming',
-          route: null
+          status: 'active',
+          route: 'potenkit-estimator'
         },
         {
           badge: 'Step 3',
           title: 'Functional Specs',
           description: 'Detailed feature specifications are automatically generated for your dev team.',
-          status: 'coming',
-          route: null
+          status: 'coming'
         },
         {
           badge: 'Step 4',
           title: 'AI Wireframes',
           description: 'AI generates screen layouts and user flows visually.',
-          status: 'coming',
-          route: null
+          status: 'active',
+          route: 'potenkit-ui-builder'
         },
         {
           badge: 'Step 5',
           title: 'Screen Spec Document',
           description: 'Generate formal design documents with detailed feature specs for each screen.',
-          status: 'coming',
-          route: null
+          status: 'coming'
         },
         {
           badge: 'Step 6',
           title: 'Development & Build',
           description: 'Build and launch your actual service based on the completed planning.',
           status: 'active',
-          route: null
+          route: 'contact'
         }
       ]
-    },
-    nav: {
-      itPlanning: 'IT Planning',
-      businessPlanning: 'Business'
     },
     value: {
       title: 'You Plan, We Build',
@@ -217,14 +202,16 @@ const translations = {
   }
 };
 
-export default function HomePage() {
+export default function PotenKitLandingPage() {
   const [lang, setLang] = useState<'ko' | 'en'>('ko');
-  const router = useRouter();
+  const { navigate } = useRouter();
   const t = translations[lang];
 
-  const handleStepClick = (step: { status: string; route: string | null }) => {
-    if (step.route) {
-      router.push(step.route);
+  const handleStepClick = (step: any) => {
+    if (step.external) {
+      window.open(step.external, '_blank');
+    } else if (step.route) {
+      navigate(step.route as any);
     }
   };
 
@@ -234,23 +221,23 @@ export default function HomePage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#E7E7E7]">
         <div className="max-w-[1156px] mx-auto px-6">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gradient-to-br from-[#0079FF] to-[#14A697] rounded-lg flex items-center justify-center">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
               <span className="font-bold text-lg text-[#222222]">{t.brand}</span>
-            </Link>
+            </div>
 
             <nav className="hidden md:flex items-center gap-8">
               <span className="text-sm text-[#0079FF] font-semibold">
-                {t.nav.itPlanning}
+                {lang === 'ko' ? 'IT 기획' : 'IT Planning'}
               </span>
-              <Link
-                href="/business"
+              <button
+                onClick={() => navigate('potenkit-business' as any)}
                 className="text-sm text-[#666666] hover:text-[#0079FF] transition-colors"
               >
-                {t.nav.businessPlanning}
-              </Link>
+                {lang === 'ko' ? '사업 기획' : 'Business'}
+              </button>
             </nav>
 
             <button
@@ -292,7 +279,7 @@ export default function HomePage() {
                     />
                   </div>
                   <button
-                    onClick={() => router.push('/prd/new')}
+                    onClick={() => navigate('potenkit-prd-new' as any)}
                     className="bg-gradient-to-r from-[#0079FF] to-[#14A697] text-white px-6 py-3 rounded-lg text-sm font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
                   >
                     {t.hero.ctaButton}
@@ -417,7 +404,7 @@ export default function HomePage() {
                   ))}
                 </ul>
                 <button
-                  onClick={() => router.push('/academy')}
+                  onClick={() => navigate('poten-school' as any)}
                   className="w-full bg-gradient-to-r from-[#0079FF] to-[#14A697] text-white px-6 py-3 rounded-xl text-sm font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
                 >
                   {t.cta.pathA.button}
@@ -448,7 +435,7 @@ export default function HomePage() {
                   ))}
                 </ul>
                 <button
-                  onClick={() => router.push('/contact')}
+                  onClick={() => navigate('contact' as any)}
                   className="w-full bg-white text-[#0079FF] px-6 py-3 rounded-xl text-sm font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
                 >
                   {t.cta.pathB.button}
