@@ -1,0 +1,5 @@
+- [PotenKit 통합 프로젝트](project_potenkit.md) — 이식 현황, 라우트 구조, 다음 작업(견적기/UI Builder)
+- [민썸 대표 프로필](user_minssum.md) — 포텐랩 대표, 한국어 중심, 디자인 감각 있는 개발 의뢰
+- [PRD 생성 흐름 원칙](feedback_prd_flow.md) — 입력 먼저, 생성 시 정보입력 모달 (전환율 최적화)
+- [potenlab 원본 레포 참조](reference_potenlab.md) — 도구 이식 시 참조할 파일 경로
+- [potenlab 페이지 목록](reference_potenlab_pages.md) — 랜딩/서비스 상세/PRD 등 이식할 페이지 상세 경로
