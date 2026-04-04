@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState, useEffect, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { getSupabase } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,14 +26,24 @@ import { StepProcessing } from './components/StepProcessing';
 import { PrdResultLayout } from './components/result/PrdResultLayout';
 
 export default function PrdNewPage() {
+  return (
+    <Suspense>
+      <PrdNewContent />
+    </Suspense>
+  );
+}
+
+function PrdNewContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuth();
   const openLogin = () => {
     router.push('/login?next=/prd/new');
   };
 
-  const [step, setStep] = useState<PrdStep>('input-method');
-  const [inputMethod, setInputMethod] = useState<InputMethod | null>(null);
+  const prefillIdea = searchParams.get('idea') || '';
+  const [step, setStep] = useState<PrdStep>(prefillIdea ? 'input' : 'input-method');
+  const [inputMethod, setInputMethod] = useState<InputMethod | null>(prefillIdea ? 'form' : null);
   const [processingPhase, setProcessingPhase] = useState<'analysis' | 'generating'>('analysis');
 
   // Result data
@@ -382,7 +392,7 @@ export default function PrdNewPage() {
             transition={{ duration: 0.4 }}
             className="pt-8 pb-24"
           >
-            <StepForm onSubmit={handleFormSubmit} onBack={handleBackToMethod} />
+            <StepForm onSubmit={handleFormSubmit} onBack={handleBackToMethod} initialValue={prefillIdea} />
           </motion.div>
         )}
 

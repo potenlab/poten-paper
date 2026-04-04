@@ -10,10 +10,11 @@ import { ImageUpload } from './ImageUpload';
 interface StepFormProps {
   onSubmit: (ideaText: string, images?: string[]) => void;
   onBack: () => void;
+  initialValue?: string;
 }
 
-export function StepForm({ onSubmit, onBack }: StepFormProps) {
-  const [ideaText, setIdeaText] = useState('');
+export function StepForm({ onSubmit, onBack, initialValue = '' }: StepFormProps) {
+  const [ideaText, setIdeaText] = useState(initialValue);
   const [images, setImages] = useState<string[]>([]);
   const [error, setError] = useState('');
 

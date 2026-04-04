@@ -219,6 +219,7 @@ const translations = {
 
 export default function HomePage() {
   const [lang, setLang] = useState<'ko' | 'en'>('ko');
+  const [ideaInput, setIdeaInput] = useState('');
   const router = useRouter();
   const t = translations[lang];
 
@@ -287,12 +288,19 @@ export default function HomePage() {
                     <Sparkles className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#0079FF]" />
                     <input
                       type="text"
+                      value={ideaInput}
+                      onChange={(e) => setIdeaInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && ideaInput.trim()) {
+                          router.push(`/prd/new?idea=${encodeURIComponent(ideaInput.trim())}`);
+                        }
+                      }}
                       placeholder={t.hero.inputPlaceholder}
                       className="w-full pl-10 pr-3 py-3 rounded-lg bg-[#FFFFFF] border border-[#E7E7E7] outline-none focus:border-[#0079FF] transition-colors text-sm text-[#222222] placeholder:text-[#666666]"
                     />
                   </div>
                   <button
-                    onClick={() => router.push('/prd/new')}
+                    onClick={() => router.push(ideaInput.trim() ? `/prd/new?idea=${encodeURIComponent(ideaInput.trim())}` : '/prd/new')}
                     className="bg-gradient-to-r from-[#0079FF] to-[#14A697] text-white px-6 py-3 rounded-lg text-sm font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
                   >
                     {t.hero.ctaButton}
