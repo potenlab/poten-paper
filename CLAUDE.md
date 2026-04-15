@@ -109,6 +109,31 @@ src/app/
 - 한국어로 대화
 - 최종 빌드 확인: 2026-04-03 통과
 
+## 공유 테이블 (potenlab ↔ poten-paper)
+아래 테이블은 **두 레포에서 동시에 직접 쿼리**됨. 스키마 변경 시 양쪽 레포의 타입/쿼리 모두 동기화 필요.
+
+| 테이블 | 소유 레포 | 조회하는 쪽 | 용도 |
+|---|---|---|---|
+| `business_plans` | poten-paper | poten-paper + potenlab PlanningBoxMyPage | 사업계획서 (포텐페이퍼 본체) |
+| `poten_diagnoses` | poten-paper | poten-paper + potenlab PlanningBoxMyPage | 포텐체커 = 사업계획서 검증 결과 |
+| `idea_validations` | poten-paper | poten-paper + potenlab PlanningBoxMyPage | 아이디어 검증 결과 (B1, 2026-04-15 신설) |
+| `pb_idea_structures` | potenlab | potenlab only | 아이디어 구체화 (IT Track 로컬 도구) |
+| `client_prds` | potenlab | potenlab only | PRD 생성기 결과 |
+| `ui_builder_projects` | potenlab | potenlab only | UI Builder 프로젝트 |
+| `pb_settings` | potenlab | potenlab only | 어드민 프롬프트/설정 |
+
+### 네이밍 혼재 주의
+prefix 가 통일 안 됨 (`pb_`, `poten_`, prefix 없음 이 섞임). 역사적 이유:
+1. `poten_diagnoses`, `poten_inquiries` 는 **포텐체커가 독립 제품일 때** 생성 → `poten_` prefix
+2. `business_plans` 은 **poten-paper 가 통합 플랫폼이 되기 전** 생성 → prefix 없음
+3. `pb_idea_structures`, `pb_settings` 는 **PlanningBox 합류 이후** 생성 → `pb_` prefix
+4. `idea_validations` (신규) 는 주변 `business_plans` / `poten_diagnoses` 패턴과 맞춰 prefix 없음
+
+### "아이디어" 계열 구분 (자주 헷갈림)
+- **아이디어 구체화** (`pb_idea_structures`, IT Track): 러프 텍스트 → 메뉴/타겟/기술 힌트 JSON 뼈대
+- **아이디어 검증** (`idea_validations`, B1): 러프 텍스트 → 투자자 시각 5개 점수 + Blue/Red Team
+- 둘 다 입력은 "러프 아이디어 텍스트" 로 비슷하지만 **용도·출력·테이블이 완전히 별개**
+
 ---
 
 ## 🆕 TODO · 아이디어 검증 (Idea Validator) 신규 기능 — 2026-04-15 추가
