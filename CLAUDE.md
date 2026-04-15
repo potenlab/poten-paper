@@ -108,3 +108,109 @@ src/app/
 - PDF 파일은 .gitignore로 제외됨
 - 한국어로 대화
 - 최종 빌드 확인: 2026-04-03 통과
+
+---
+
+## 🆕 TODO · 아이디어 검증 (Idea Validator) 신규 기능 — 2026-04-15 추가
+
+### 배경 & 통합 맥락
+이 레포(poten-paper)는 PlanningBox(planning-box.potenlab.dev) 서브도메인의 **Biz Track 백엔드 3형제** 를 담당 중:
+
+| Biz Track | poten-paper 경로 | 상태 |
+|---|---|---|
+| B1 **아이디어 검증** | `/idea-validator/*` | **🆕 신규 구현 필요 (이 섹션)** |
+| B2 사업계획서 생성 | `/poten-paper/*` | ✅ 기존 |
+| B3 사업계획서 검증 | `/poten-checker/*` | ✅ 기존 |
+
+PlanningBox(potenlab 레포, `planning-box.potenlab.dev`)가 Vercel 리버스 프록시로 이 세 경로를 자기 도메인으로 노출 중. 즉 이 레포에서 `/idea-validator/new` 페이지를 만들면 자동으로 `https://planning-box.potenlab.dev/idea-validator/new` 에서도 접근됨 (추가 설정 불필요 — planning-box 쪽 `vercel.json` 에 rewrite 이미 선반영됨).
+
+### 무엇을 만드나
+**아이디어 검증 도구** — 유저가 **러프한 아이디어**(문장 몇 개)를 입력하면 AI가 투자자 시각으로 빠르게 스크리닝하고 점수 + 피드백을 제공.
+
+포텐체커(사업계획서 검증)와 구분되는 점:
+- **포텐체커** = 이미 작성한 사업계획서(파일) 업로드 → 6지표 심층 분석 (무거움)
+- **아이디어 검증** = 자유 텍스트 아이디어 → 스크리닝 점수 (가벼움, 빠름)
+
+### 스펙
+**페이지** (Next.js App Router)
+- `src/app/idea-validator/new/page.tsx` — 입력 화면 (textarea + 제출 버튼)
+- `src/app/idea-validator/[id]/page.tsx` — 결과 상세 (점수, 피드백)
+- (선택) `src/app/idea-validator/my/page.tsx` — 유저의 검증 히스토리
+
+**API**
+- `src/app/api/idea-validator/generate/route.ts`
+- 입력: `{ ideaText: string }`
+- 처리: Gemini 2.5 Flash via OpenRouter, **1회 호출**
+- 출력: JSON (아래 스키마)
+
+**Supabase 테이블** (새로 생성)
+```sql
+create table public.idea_validations (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  idea_text text not null,
+  scores jsonb not null,          -- { market: 8, revenue: 6, feasibility: 7, ... }
+  overall_score integer,           -- 0~100
+  blue_team text,                  -- 긍정적 코칭 피드백
+  red_team text,                   -- 날카로운 반박
+  summary text,                    -- 한 줄 요약
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
+
+alter table public.idea_validations enable row level security;
+create policy "users read own validations" on public.idea_validations for select using (auth.uid() = user_id);
+create policy "users insert own validations" on public.idea_validations for insert with check (auth.uid() = user_id);
+create policy "users delete own validations" on public.idea_validations for delete using (auth.uid() = user_id);
+```
+
+**출력 JSON 스키마**
+```ts
+interface IdeaValidation {
+  summary: string;               // 한 줄 요약 (30자 이내)
+  scores: {
+    market: number;              // 시장성 0~10
+    revenue: number;             // 수익성 0~10
+    feasibility: number;         // 실현가능성 0~10
+    differentiation: number;     // 차별성 0~10
+    timing: number;              // 타이밍 0~10
+  };
+  overall_score: number;         // 전체 점수 0~100
+  blue_team: string;             // 긍정 코칭 (강점 + 발전 방향)
+  red_team: string;              // 날카로운 반박 (리스크 + 약점)
+  improvement_tips: string[];    // 개선 제안 3~5개
+}
+```
+
+**시스템 프롬프트 방향**
+- "당신은 시드 단계 초기 창업 심사위원입니다. 러프한 아이디어를 **30초 안에** 투자자 시각으로 평가하세요."
+- Blue Team: 따뜻한 격려, 강점 부각, 다음 스텝 제안
+- Red Team: 날카로운 반박, 시장 리스크, 실패 패턴 경고
+- 한국어 출력, 출력은 **JSON 객체 하나**만 (포텐체커와 동일 패턴)
+
+### UX 가이드라인 (기존 포텐체커와 맞추기)
+- 입력 화면: 중앙 정렬 카드, textarea 큼, 예시 프롬프트 3~4개 칩
+- 결과 화면: 점수 원형 차트(recharts) + 지표별 바 + Blue/Red 2단 카드 + 개선 제안 리스트
+- Loading: "심사 중..." 애니메이션, 약 5초
+- Supabase Auth 필수 — 비로그인 시 `/login?next=/idea-validator/new`
+
+### PlanningBox 통합 (완료 후 연락)
+구현 완료되면 potenlab 레포의 다음 2곳에서 `comingSoon: true` → `false` 바꿔주면 활성화됨:
+- `potenlab/src/components/PlanningBoxSection.tsx` → bizTools 배열의 B1 항목
+- `potenlab/src/pages/PlanningBoxMyPage.tsx` → 아이디어 검증 탭이 `ValComingSoon` → 실제 `ValList` 컴포넌트로 교체
+
+마이페이지 리스트 쿼리 예시
+```ts
+supabase.from('idea_validations')
+  .select('id, summary, overall_score, created_at')
+  .eq('user_id', user.id)
+  .order('created_at', { ascending: false })
+```
+
+### 비용 예상
+- Gemini 2.5 Flash 1회 호출 (input ~800 tokens, output ~1500 tokens)
+- 약 **8원/건** (포텐페이퍼·포텐체커 대비 1/10 수준)
+- 무료 티어로 풀어도 월 운영비 미미
+
+### 우선순위
+poten-paper 레포 자체 TODO 중 우선순위는 유저가 판단. PlanningBox 쪽은 껍데기 선반영 상태라 언제 완성돼도 바로 연결 가능.
