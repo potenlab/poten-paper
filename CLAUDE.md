@@ -8,9 +8,8 @@ AI 사업계획서 자동 생성 서비스. 예비/초기 창업자가 예비창
 - **스타일링**: Tailwind CSS 4
 - **DB/인증**: Supabase (the-potential 프로젝트와 공유)
 - **AI**: OpenRouter API (Gemini 2.5 Flash) - 리서치 → 생성 2단계 호출
-- **이미지 생성**: OpenRouter (비용 발생 → HTML 시각화 버전으로 대체 예정)
-- **차트**: Recharts (bar, pie, line, funnel 등)
-- **배포**: Vercel Hobby (`https://poten-paper.vercel.app`)
+- **시각화**: HTML/CSS + Recharts (bar, pie, line, horizontal-bar). 이미지 생성은 중단 (아래 참고)
+- **배포**: Vercel + 커스텀 도메인 `https://paper.potenlab.dev` (기존 `poten-paper.vercel.app` 병행 유지)
 
 ## 주요 구조
 - `src/app/poten-paper/new/` - 사업계획서 생성 플로우
@@ -45,10 +44,16 @@ AI 사업계획서 자동 생성 서비스. 예비/초기 창업자가 예비창
 - 네트워킹 (외부 협력기관)
 - 시각화: 조직도, 협력기관 표
 
-## HTML 시각화 버전 (진행 예정)
-이미지 생성 API 비용을 없애기 위해 HTML/CSS 기반 시각화 버전 개발 예정.
+## 시각화 현황
+
+**이미지 생성**: 실질 중단. LLM 프롬프트에서 `imagePrompt` 필드 요청 제거 → `imageRequests.length === 0` 으로 이미지 API 호출 스킵. 데드 코드(`use-image-generation.ts`, `/api/poten-paper/generate-images`, `types.ts` 의 `imagePrompt` 필드)는 나중에 쓸 수도 있어 남겨둠.
+
+**완료**:
+- ✅ Recharts 차트 (bar, pie, line, horizontal-bar) — 통계·매출·성장 추이 등
+
+**미구현 (TODO)**:
+- 포지셔닝맵, SWOT, TAM/SAM/SOM 카드, BM캔버스, 조직도, 플로우 다이어그램, 경쟁사 비교표, 간트차트
 - 참고 사례: https://dionnam.github.io/yecangpe/ (HangulJobs 사업계획서)
-- 기존 recharts 차트 유지 + 추가 컴포넌트: 포지셔닝맵, SWOT, TAM/SAM/SOM, BM캔버스, 조직도, 플로우 다이어그램, 비교표 등
 
 ## 환경변수
 ```
@@ -59,49 +64,37 @@ OPENROUTER_API_KEY
 SITE_URL
 ```
 
-## PotenKit 통합 (진행중)
-이 레포를 PotenKit(IT 기획 도구 통합 플랫폼)으로 확장 중. potenlab 레포에서 도구를 이식하는 중.
+## 브랜드 포지셔닝 (2026-04-17 확정)
 
-### 이식 대상 (potenlab → 여기)
-1. **PRD 생성기** (이식 완료)
-   - ✅ lib 복사 완료: `src/lib/prd/` (types, constants, prompts, extract-text, normalize-document, parse-json, pdf-export, safe-markdown)
-   - ✅ 컴포넌트 복사 완료: `src/app/prd/new/components/` (ProgressIndicator, StepForm, StepInputMethod, StepUpload, StepProcessing, ImageUpload, result/*)
-   - ✅ `'use client'` 추가 완료 (StepForm, StepInputMethod, StepUpload, ImageUpload, PrdResultLayout, InsightPanel, DocumentToolbar, DocumentViewer)
-   - ✅ API 라우트 생성 완료: `app/api/prd/generate/route.ts`, `app/api/prd/modify/route.ts`
-   - ✅ 페이지 생성 완료: `app/prd/new/page.tsx`, `app/prd/[id]/page.tsx` (+prd-view-client.tsx), `app/prd/my/page.tsx`
-   - ✅ Supabase 클라이언트: `getSupabase()` 사용 (prd_documents 테이블은 DB에 별도 생성 필요)
-   - ✅ 필요 패키지 모두 설치 확인 (sonner, framer-motion, pdfjs-dist, mammoth 등)
-   - ✅ Supabase `prd_documents` 테이블 생성 완료 (RLS 포함)
-   - ✅ Supabase 타입 추가 + `as any` 캐스팅 제거 완료
-2. **견적기** (미시작)
-3. **UI Builder** (미시작)
+포텐페이퍼를 **사업기획 도구 우산 브랜드** 로 리포지셔닝.
 
-### PotenKit 구조 계획
+| 담당 | 브랜드 | 도구 |
+|---|---|---|
+| **사업기획** | 포텐페이퍼 (이 레포) | 사업계획서 생성·검증, 아이디어 검증 |
+| **IT 기획** | 플래닝박스 (potenlab) | PRD, 견적, UI Builder, 아이디어 구체화 |
+
+**PotenKit 브랜드는 폐기**. 이전에 쓰던 "PotenKit = IT기획 우산" 개념은 플래닝박스로 흡수됨.
+
+### 라우팅 구조 (현재)
 ```
 src/app/
-  ├── page.tsx              ← PotenKit 랜딩 (IT기획 홈)
-  ├── business/             ← 사업기획 (포텐페이퍼+체커)
-  ├── poten-paper/          ← 기존 유지
-  ├── poten-checker/        ← 기존 유지
-  ├── prd/                  ← potenlab에서 이식
-  │   ├── new/              ← PRD 생성
-  │   ├── [id]/             ← PRD 결과 보기
-  │   └── my/               ← 내 PRD 목록
-  ├── estimator/            ← 이식 예정
-  ├── ui-builder/           ← 이식 예정
-  ├── my/                   ← 통합 마이페이지 (전체 문서)
+  ├── page.tsx              ← `/poten-paper` 로 리다이렉트 (루트 = 포텐페이퍼)
+  ├── poten-paper/          ← 사업계획서 생성 (메인)
+  ├── poten-checker/        ← 사업계획서 검증
+  ├── idea-validator/       ← 아이디어 검증 (B1)
+  ├── potenkit/             ← 리다이렉트 (하위 전부 `/poten-paper` 로) — 제거 예정
+  ├── prd/                  ← 레거시 (플래닝박스로 이관 대상, 당분간 유지)
+  ├── login/                ← 구글/카카오 OAuth
+  ├── admin/                ← 통계·검색·삭제
   └── api/
-      ├── poten-paper/      ← 기존
-      ├── prd/              ← 이식
-      ├── estimator/        ← 이식 예정
-      └── ui-builder/       ← 이식 예정
+      ├── poten-paper/
+      ├── poten-checker/
+      ├── idea-validator/
+      └── prd/              ← 레거시
 ```
 
-### 브랜드
-- 서비스명: PotenKit (포텐킷)
-- 컨셉: "아이디어에서 실행까지, 궁극의 IT 기획 키트"
-- 포텐랩 하위 브랜드, 나중에 독립 도메인/레포로 분리 예정
-- 계정: Supabase Auth 통합 (더포텐셜/포텐랩/포텐킷 공유)
+### PRD 관련 레거시
+PRD 생성기는 과거 "PotenKit 통합" 맥락으로 potenlab → 여기로 이식됐지만, 브랜드 재편 후 IT 기획 = 플래닝박스로 이동. 당분간 `/prd/*` 는 여기에 살아있음 (동작함). 플래닝박스로 이관 후 제거.
 
 ## 참고
 - Supabase 클라이언트는 모듈 레벨 싱글톤이 아닌 `getSupabase()` lazy 초기화 사용 (빌드 시 SSR prerender 에러 방지)

@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { useUserCredits } from '@/hooks/use-user-credits';
 import { useActiveSubscription } from '@/hooks/use-subscription';
-import { useFeatureAccess } from '@/hooks/use-feature-access';
 import { getSupabase } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +14,7 @@ import {
   Loader2,
   Coins,
   Crown,
-  Zap,
+  Sparkles,
   ExternalLink,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -36,8 +35,6 @@ interface SavedPlan {
 function StatusCards({ userId }: { userId: string }) {
   const { data: credits } = useUserCredits(userId);
   const { data: subscription, isLoading: subLoading } = useActiveSubscription(userId);
-  const { isMember, remaining, limit, freeRemaining, freeLimit } =
-    useFeatureAccess('poten_paper');
 
   const balance = credits?.balance ?? 0;
   const isSub = !!subscription;
@@ -112,57 +109,21 @@ function StatusCards({ userId }: { userId: string }) {
         </a>
       </div>
 
-      {/* 페이퍼 사용량 */}
+      {/* 베타 상태 */}
       <div className="bg-card border border-border rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-3">
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center"
             style={{ backgroundColor: '#8b5cf615' }}
           >
-            <Zap className="w-4 h-4 text-violet-500" />
+            <Sparkles className="w-4 h-4 text-violet-500" />
           </div>
-          <span className="text-sm font-medium text-muted-foreground">이용권</span>
+          <span className="text-sm font-medium text-muted-foreground">베타</span>
         </div>
-        {isMember ? (
-          <>
-            <p className="text-lg font-bold text-foreground">
-              {remaining}
-              <span className="text-sm font-normal text-muted-foreground">
-                /{limit}회 남음
-              </span>
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">이번 결제 주기</p>
-            {/* 프로그레스 바 */}
-            <div className="mt-2 h-1.5 rounded-full bg-muted/30 overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all"
-                style={{
-                  width: `${(remaining / limit) * 100}%`,
-                  backgroundColor: BRAND_COLOR,
-                }}
-              />
-            </div>
-          </>
-        ) : (
-          <>
-            <p className="text-lg font-bold text-foreground">
-              {freeRemaining}
-              <span className="text-sm font-normal text-muted-foreground">
-                /{freeLimit}회 남음
-              </span>
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">무료 체험</p>
-            <div className="mt-2 h-1.5 rounded-full bg-muted/30 overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all"
-                style={{
-                  width: `${(freeRemaining / freeLimit) * 100}%`,
-                  backgroundColor: freeRemaining > 0 ? '#22c55e' : '#ef4444',
-                }}
-              />
-            </div>
-          </>
-        )}
+        <p className="text-lg font-bold text-foreground">무제한 무료</p>
+        <p className="text-xs text-muted-foreground mt-1">
+          사업계획서 자유롭게 생성해보세요
+        </p>
       </div>
     </div>
   );
