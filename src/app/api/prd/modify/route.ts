@@ -52,7 +52,7 @@ ${body.message}
         'Content-Type': 'application/json',
         Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'HTTP-Referer': process.env.SITE_URL || 'https://potenlab.com',
-        'X-Title': 'PotenKit PRD Generator',
+        'X-Title': '포텐페이퍼 PRD Generator',
       },
       body: JSON.stringify({
         model: MODEL_ID,

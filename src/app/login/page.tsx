@@ -52,9 +52,9 @@ function LoginContent() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 bg-gradient-to-br from-[#0079FF]/15 to-[#14A697]/15">
             <Sparkles className="w-8 h-8 text-[#0079FF]" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">PotenKit</h1>
+          <h1 className="text-2xl font-bold text-foreground">포텐페이퍼</h1>
           <p className="text-sm text-muted mt-2">
-            로그인하고 IT 기획 도구를 시작하세요
+            로그인하고 사업기획 도구를 시작하세요
           </p>
         </div>
 

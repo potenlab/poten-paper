@@ -1,390 +1,243 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
 import {
-  ScrollText,
-  Upload,
-  Lightbulb,
-  Search,
-  FileText,
-  BarChart3,
-  ArrowRight,
-  ImageIcon,
-  PenTool,
-  Target,
-  TrendingUp,
-  Users,
-  DollarSign,
-  Layers,
   Sparkles,
+  FileText,
+  ClipboardCheck,
+  Lightbulb,
+  TrendingUp,
+  ArrowRight,
+  CheckCircle,
 } from 'lucide-react';
 
-const BRAND_COLOR = '#0EA5E9';
-const BRAND_COLOR_DARK = '#0284C7';
+const translations = {
+  ko: {
+    hero: {
+      headline: '추상적인 아이디어를',
+      headlineHighlight: '실행 가능한 계획으로',
+      subheadline:
+        '아이디어 진단부터 정부지원사업용 사업계획서까지, AI가 자동으로 작성해드립니다.',
+      inputPlaceholder: '사업 아이디어를 자유롭게 설명해주세요...',
+      ctaButton: '사업계획서 만들기',
+    },
+    features: {
+      title: '사업 기획에 필요한 모든 것',
+      subtitle: 'AI가 분석하고, 문서를 만들어드립니다',
+      items: [
+        {
+          icon: 'lightbulb',
+          title: '아이디어 진단',
+          description:
+            '사업 아이디어의 시장성, 경쟁력, 실현가능성을 AI가 분석하고 점수를 매깁니다.',
+        },
+        {
+          icon: 'file',
+          title: '사업계획서 자동 생성',
+          description:
+            '예비창업패키지 등 정부지원사업 신청용 사업계획서를 PSST 프레임워크로 작성합니다.',
+        },
+        {
+          icon: 'chart',
+          title: '시장분석 & 시각화',
+          description:
+            'TAM/SAM/SOM 분석, 경쟁사 비교, SWOT 분석을 자동으로 생성하고 차트로 시각화합니다.',
+        },
+        {
+          icon: 'check',
+          title: 'BM 캔버스 & 로드맵',
+          description:
+            '비즈니스 모델 캔버스, 수익 구조, 로드맵까지 한 번에 만들어집니다.',
+        },
+      ],
+    },
+    process: {
+      title: '이렇게 진행됩니다',
+      steps: [
+        {
+          number: '01',
+          title: '아이디어 입력',
+          description: '만들고 싶은 서비스나 사업 아이디어를 자유롭게 설명하세요.',
+        },
+        {
+          number: '02',
+          title: 'AI 분석',
+          description: 'AI가 시장, 경쟁사, 타겟 고객을 자동으로 리서치합니다.',
+        },
+        {
+          number: '03',
+          title: '문서 생성',
+          description: '분석 결과를 바탕으로 구조화된 사업계획서가 생성됩니다.',
+        },
+        {
+          number: '04',
+          title: '수정 & 다운로드',
+          description: '섹션별로 수정하고 PDF로 다운로드하세요.',
+        },
+      ],
+    },
+    cta: {
+      title: '지금 바로 시작하세요',
+      description: '복잡한 사업계획서, AI가 대신 써드립니다.',
+      button: '무료로 시작하기',
+    },
+    footer: {
+      copyright: '© 2026 포텐페이퍼. All rights reserved.',
+    },
+  },
+};
 
-const PLAN_SECTIONS = [
-  {
-    icon: Target,
-    title: '문제 정의 & 솔루션',
-    desc: '해결하고자 하는 핵심 문제와 솔루션의 차별점을 명확하게 정리합니다.',
-  },
-  {
-    icon: TrendingUp,
-    title: '시장 분석 & 트렌드',
-    desc: 'AI가 웹 리서치를 통해 TAM-SAM-SOM, 산업 트렌드, 시장 규모를 조사합니다.',
-  },
-  {
-    icon: Users,
-    title: '경쟁사 분석',
-    desc: '주요 경쟁사와 비교 분석표를 자동 생성하고 진입 전략을 제안합니다.',
-  },
-  {
-    icon: DollarSign,
-    title: '비즈니스 모델 & 수익 구조',
-    desc: '수익 모델, 단가 구조, 매출 전망을 체계적으로 구성합니다.',
-  },
-  {
-    icon: Layers,
-    title: '실행 계획 & 로드맵',
-    desc: '개발 마일스톤, 출시 전략, KPI를 포함한 실행 로드맵을 작성합니다.',
-  },
-  {
-    icon: ImageIcon,
-    title: '시각 자료 가이드',
-    desc: '각 섹션에 필요한 그래프, 차트, 다이어그램 종류와 구성을 안내합니다.',
-  },
-];
-
-const STEPS = [
-  {
-    step: '01',
-    icon: Lightbulb,
-    title: '아이디어 입력',
-    desc: '사업 아이디어를 입력하거나, 기존 PRD/문서를 업로드하세요.',
-  },
-  {
-    step: '02',
-    icon: Search,
-    title: 'AI 리서치',
-    desc: 'AI가 시장 분석, 경쟁사 조사, 산업 트렌드를 자동으로 리서치합니다.',
-  },
-  {
-    step: '03',
-    icon: PenTool,
-    title: '사업계획서 생성',
-    desc: 'CEO 가이드라인에 맞춰 섹션별 사업계획서 초안을 자동 생성합니다.',
-  },
-  {
-    step: '04',
-    icon: FileText,
-    title: '검토 & 수정',
-    desc: '생성된 초안을 검토하고, 섹션별로 재생성하거나 내보낼 수 있습니다.',
-  },
-];
-
-const INPUT_OPTIONS = [
-  {
-    icon: Upload,
-    title: 'PRD / 기존 문서 업로드',
-    desc: 'PDF, DOCX 형식의 기존 문서를 업로드하면 AI가 분석하여 사업계획서로 변환합니다.',
-    badge: 'PDF, DOCX 지원',
-  },
-  {
-    icon: Lightbulb,
-    title: '아이디어로 시작하기',
-    desc: '사업명, 산업군, 타겟 고객, 문제/솔루션 등을 단계별로 입력하면 AI가 완성합니다.',
-    badge: '가이드 폼 제공',
-  },
-];
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  lightbulb: Lightbulb,
+  file: FileText,
+  chart: TrendingUp,
+  check: CheckCircle,
+};
 
 export default function PotenPaperLandingPage() {
+  const [idea, setIdea] = useState('');
   const router = useRouter();
+  const t = translations.ko;
 
   const handleStart = () => {
-    router.push('/poten-paper/new');
+    const url = idea.trim()
+      ? `/poten-paper/new?idea=${encodeURIComponent(idea.trim())}`
+      : '/poten-paper/new';
+    router.push(url);
   };
 
   return (
-    <>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-sky-50 to-transparent dark:from-sky-500/10 dark:to-transparent">
-        <div className="max-w-[1156px] mx-auto px-4 sm:px-8 xl:px-[62px] py-20 sm:py-32">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[13px] font-semibold mb-6"
-              style={{ backgroundColor: `${BRAND_COLOR}15`, color: BRAND_COLOR }}
-            >
-              <ScrollText className="w-4 h-4" />
-              포텐페이퍼
-            </span>
-            <h1 className="text-4xl sm:text-5xl font-bold text-foreground leading-tight mb-6">
-              AI 사업계획서 자동 생성
-            </h1>
-            <p className="text-lg text-muted leading-relaxed mb-4 max-w-2xl mx-auto">
-              사업 아이디어만 있으면 충분합니다.
-              <br className="hidden sm:block" />
-              AI가 시장 조사부터 사업계획서 초안 작성까지
-              <br className="hidden sm:block" />
-              정부 지원사업 신청에 맞춰 자동으로 완성해 드립니다.
-            </p>
-            <p className="text-sm text-muted/70 mb-8">
-              PRD 업로드 또는 아이디어 입력, 두 가지 방식으로 시작할 수 있습니다.
-            </p>
-            <div className="flex items-center justify-center gap-3 flex-wrap">
-              <Button
-                onClick={handleStart}
-                className="h-14 px-8 rounded-2xl text-white shadow-lg hover:shadow-xl transition-all text-[16px] font-semibold"
-                style={{ backgroundColor: BRAND_COLOR }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor = BRAND_COLOR_DARK)
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundColor = BRAND_COLOR)
-                }
-              >
-                사업계획서 만들기
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Input Options Section */}
-      <section className="max-w-[1156px] mx-auto px-4 sm:px-8 xl:px-[62px] py-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl font-bold text-foreground mb-4">
-            두 가지 방법으로 시작하세요
-          </h2>
-          <p className="text-muted max-w-xl mx-auto">
-            기존 문서가 있다면 업로드하고, 아이디어만 있다면 가이드 폼을 따라 입력하세요.
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          {INPUT_OPTIONS.map((opt, i) => (
-            <motion.div
-              key={opt.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.15 }}
-              className="bg-card rounded-2xl border border-border p-8 hover:shadow-lg transition-shadow text-center"
-            >
-              <div
-                className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-5"
-                style={{ backgroundColor: `${BRAND_COLOR}15` }}
-              >
-                <opt.icon className="w-7 h-7" style={{ color: BRAND_COLOR }} />
-              </div>
-              <span
-                className="inline-block text-[11px] font-semibold px-2.5 py-1 rounded-full mb-4"
-                style={{ backgroundColor: `${BRAND_COLOR}10`, color: BRAND_COLOR }}
-              >
-                {opt.badge}
+    <div className="min-h-screen bg-white">
+      {/* Hero */}
+      <section className="relative px-6 pt-16 pb-16 md:pt-24 md:pb-20 bg-gradient-to-b from-[#14A697]/5 to-white">
+        <div className="max-w-[1156px] mx-auto text-center">
+          <div className="max-w-3xl mx-auto">
+            <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4 leading-tight">
+              {t.hero.headline}
+              <br />
+              <span className="bg-gradient-to-r from-[#14A697] to-[#0079FF] bg-clip-text text-transparent">
+                {t.hero.headlineHighlight}
               </span>
-              <h3 className="font-bold text-lg text-foreground mb-2">
-                {opt.title}
-              </h3>
-              <p className="text-[14px] text-muted leading-relaxed">
-                {opt.desc}
-              </p>
-            </motion.div>
-          ))}
+            </h1>
+            <p className="text-base md:text-lg text-[#666666] mb-8">
+              {t.hero.subheadline}
+            </p>
+
+            <div className="relative max-w-2xl mx-auto">
+              <div className="bg-white rounded-xl shadow-[0px_2px_8px_rgba(0,0,0,0.06)] border border-[#E7E7E7] p-1.5">
+                <div className="flex flex-col md:flex-row gap-2">
+                  <div className="flex-1 relative">
+                    <Sparkles className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#14A697]" />
+                    <input
+                      type="text"
+                      value={idea}
+                      onChange={(e) => setIdea(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleStart();
+                      }}
+                      placeholder={t.hero.inputPlaceholder}
+                      className="w-full pl-10 pr-3 py-3 rounded-lg bg-[#FFFFFF] border border-[#E7E7E7] outline-none focus:border-[#14A697] transition-colors text-sm text-[#222222] placeholder:text-[#666666]"
+                    />
+                  </div>
+                  <button
+                    onClick={handleStart}
+                    className="bg-gradient-to-r from-[#14A697] to-[#0079FF] text-white px-6 py-3 rounded-lg text-sm font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
+                  >
+                    {t.hero.ctaButton}
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Plan Sections - What AI Generates */}
-      <section className="bg-card-secondary py-20">
-        <div className="max-w-[1156px] mx-auto px-4 sm:px-8 xl:px-[62px]">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              AI가 작성하는 사업계획서 구성
+      {/* Features */}
+      <section className="px-6 py-16">
+        <div className="max-w-[1156px] mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-3">
+              {t.features.title}
             </h2>
-            <p className="text-muted max-w-xl mx-auto">
-              CEO 가이드라인을 기반으로 정부 지원사업 평가 기준에 맞는 사업계획서를 생성합니다.
-            </p>
-          </motion.div>
+            <p className="text-sm md:text-base text-[#666666]">{t.features.subtitle}</p>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {PLAN_SECTIONS.map((section, i) => (
-              <motion.div
-                key={section.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.1 }}
-                className="bg-card rounded-2xl border border-border p-6 hover:shadow-lg transition-shadow"
-              >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {t.features.items.map((item, index) => {
+              const Icon = iconMap[item.icon];
+              return (
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                  style={{ backgroundColor: `${BRAND_COLOR}15` }}
+                  key={index}
+                  className="group bg-white rounded-xl p-6 border border-[#E7E7E7] hover:border-[#14A697] hover:shadow-[0px_2px_8px_rgba(0,0,0,0.06)] transition-all duration-300 relative overflow-hidden"
                 >
-                  <section.icon className="w-6 h-6" style={{ color: BRAND_COLOR }} />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#14A697]/10 to-transparent rounded-bl-full" />
+                  <div className="relative">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#14A697] to-[#0079FF] rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">{item.title}</h3>
+                    <p className="text-sm text-[#666666] leading-relaxed">
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="font-bold text-[17px] text-foreground mb-2">
-                  {section.title}
-                </h3>
-                <p className="text-[14px] text-muted leading-relaxed">
-                  {section.desc}
-                </p>
-              </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Process */}
+      <section className="px-6 py-16 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-[1156px] mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-12 text-center">
+            {t.process.title}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {t.process.steps.map((step, index) => (
+              <div key={index} className="text-center">
+                <div className="w-14 h-14 bg-gradient-to-br from-[#14A697] to-[#0079FF] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <span className="text-white font-bold text-lg">{step.number}</span>
+                </div>
+                <h3 className="text-base font-bold text-[#1A1A1A] mb-2">{step.title}</h3>
+                <p className="text-sm text-[#666666] leading-relaxed">{step.description}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="max-w-[1156px] mx-auto px-4 sm:px-8 xl:px-[62px] py-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl font-bold text-foreground mb-4">
-            이용 방법
-          </h2>
-          <p className="text-muted max-w-xl mx-auto">
-            4단계만 따라오시면 AI가 사업계획서 초안을 완성합니다.
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {STEPS.map((item, i) => (
-            <motion.div
-              key={item.step}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.12 }}
-              className="bg-card rounded-2xl p-6 text-center border border-border"
+      {/* CTA */}
+      <section className="px-6 py-16">
+        <div className="max-w-[800px] mx-auto">
+          <div className="bg-gradient-to-br from-[#14A697] to-[#0079FF] rounded-2xl p-10 text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">{t.cta.title}</h2>
+            <p className="text-base text-white/90 mb-8">{t.cta.description}</p>
+            <button
+              onClick={() => router.push('/poten-paper/new')}
+              className="inline-flex items-center gap-2 bg-white text-[#14A697] px-8 py-4 rounded-xl text-base font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
             >
-              <div
-                className="text-5xl font-black mb-4"
-                style={{ color: `${BRAND_COLOR}25` }}
-              >
-                {item.step}
-              </div>
-              <div
-                className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4"
-                style={{ backgroundColor: `${BRAND_COLOR}15` }}
-              >
-                <item.icon className="w-7 h-7" style={{ color: BRAND_COLOR }} />
-              </div>
-              <h3 className="font-bold text-lg text-foreground mb-2">
-                {item.title}
-              </h3>
-              <p className="text-[14px] text-muted">{item.desc}</p>
-            </motion.div>
-          ))}
+              {t.cta.button}
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* Visual Guide Highlight */}
-      <section className="bg-card-secondary py-20">
-        <div className="max-w-[1156px] mx-auto px-4 sm:px-8 xl:px-[62px]">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="max-w-3xl mx-auto text-center"
-          >
-            <div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6"
-              style={{ backgroundColor: `${BRAND_COLOR}15` }}
-            >
-              <Sparkles className="w-8 h-8" style={{ color: BRAND_COLOR }} />
+      {/* Footer */}
+      <footer className="px-6 py-8 bg-[#222222]">
+        <div className="max-w-[1156px] mx-auto text-center">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <div className="w-7 h-7 bg-gradient-to-br from-[#0079FF] to-[#14A697] rounded-lg flex items-center justify-center">
+              <ClipboardCheck className="w-4 h-4 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              시각 자료 가이드 포함
-            </h2>
-            <p className="text-muted leading-relaxed mb-6">
-              각 섹션마다 어떤 그래프와 이미지를 넣어야 하는지 구체적으로 안내합니다.
-              <br className="hidden sm:block" />
-              그래프 유형, 축 구성, 데이터 포인트까지 - 평가자에게 어필하는 시각 자료를 쉽게 만들 수 있습니다.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-              {[
-                { label: '라인 차트', example: '매출 성장 추이' },
-                { label: '비교 매트릭스', example: '경쟁사 기능 비교' },
-                { label: '플로우 다이어그램', example: '서비스 운영 구조' },
-              ].map((item, i) => (
-                <motion.div
-                  key={item.label}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: 0.2 + i * 0.1 }}
-                  className="bg-card rounded-xl border border-border p-4"
-                >
-                  <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-3"
-                    style={{ backgroundColor: `${BRAND_COLOR}10` }}
-                  >
-                    <BarChart3 className="w-5 h-5" style={{ color: BRAND_COLOR }} />
-                  </div>
-                  <p className="font-semibold text-sm text-foreground">{item.label}</p>
-                  <p className="text-[12px] text-muted mt-1">{item.example}</p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+            <span className="font-bold text-base text-white">포텐페이퍼</span>
+          </div>
+          <p className="text-xs text-[#666666]">{t.footer.copyright}</p>
         </div>
-      </section>
-
-      {/* Final CTA */}
-      <section
-        className="py-20"
-        style={{
-          background: `linear-gradient(to right, ${BRAND_COLOR}, ${BRAND_COLOR_DARK})`,
-        }}
-      >
-        <div className="max-w-[1156px] mx-auto px-4 sm:px-8 xl:px-[62px] text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-              지금 바로 사업계획서를 만들어 보세요
-            </h2>
-            <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
-              AI가 시장 조사부터 초안 작성까지, 정부 지원사업에 맞는 사업계획서를 자동으로 완성합니다.
-            </p>
-            <Button
-              onClick={handleStart}
-              className="h-14 px-10 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all text-[16px] font-semibold hover:bg-gray-50 dark:hover:bg-gray-200"
-              style={{ color: BRAND_COLOR }}
-            >
-              무료로 시작하기
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
-          </motion.div>
-        </div>
-      </section>
-    </>
+      </footer>
+    </div>
   );
 }
