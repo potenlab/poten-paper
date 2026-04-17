@@ -98,6 +98,13 @@ src/app/
       └── idea-validator/
 ```
 
+### 크레딧 시스템 통합 스펙 (2026-04-17)
+the-potential 과의 크레딧 연동 스펙: [`docs/credits-integration-v1.md`](docs/credits-integration-v1.md)
+- 즉석 차감 모델 제안
+- `consume_credits`, `refund_credits` RPC 추가 제안
+- `idea_validator_1` 리워드 10c 추가 제안
+- the-potential 팀 합의 후 Phase 1 구현 시작
+
 ### PRD 이관 완료 (2026-04-17)
 PRD 생성기는 **플래닝박스(`planning-box` 신규 레포)** 로 완전 이관. 이 레포의 `/prd/*` 와 `/api/prd/*` 는 삭제됐고, `next.config.ts` 의 `redirects()` 가 `/prd/*` · `/api/prd/*` → `https://planning-box.potenlab.dev/prd/*` 로 308 리다이렉트함. 북마크 유저 보호 목적의 임시 조치. 장기적으로 리다이렉트도 제거 가능.
 
