@@ -22,7 +22,7 @@ import {
 import Link from 'next/link';
 
 const BRAND_COLOR = '#0EA5E9';
-const THE_POTENTIAL_URL = 'https://the-potential.co';
+const THE_POTENTIAL_URL = 'https://thepotential.kr';
 
 type TabKey = 'plans' | 'diagnoses' | 'validations';
 
