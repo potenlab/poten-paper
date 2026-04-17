@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'HTTP-Referer': process.env.SITE_URL || 'https://paper.potenlab.dev',
-        'X-Title': '포텐페이퍼 Positioning Map',
+        'X-Title': 'PotenPaper Positioning Map',
       },
       body: JSON.stringify({
         model: MODEL_ID,
