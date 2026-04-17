@@ -90,18 +90,16 @@ src/app/
   ├── poten-checker/        ← 사업계획서 검증
   ├── idea-validator/       ← 아이디어 검증 (B1)
   ├── potenkit/             ← 리다이렉트 (하위 전부 `/poten-paper` 로) — 제거 예정
-  ├── prd/                  ← 레거시 (플래닝박스로 이관 대상, 당분간 유지)
   ├── login/                ← 구글/카카오 OAuth
   ├── admin/                ← 통계·검색·삭제
   └── api/
       ├── poten-paper/
       ├── poten-checker/
-      ├── idea-validator/
-      └── prd/              ← 레거시
+      └── idea-validator/
 ```
 
-### PRD 관련 레거시
-PRD 생성기는 과거 "PotenKit 통합" 맥락으로 potenlab → 여기로 이식됐지만, 브랜드 재편 후 IT 기획 = 플래닝박스로 이동. 당분간 `/prd/*` 는 여기에 살아있음 (동작함). 플래닝박스로 이관 후 제거.
+### PRD 이관 완료 (2026-04-17)
+PRD 생성기는 **플래닝박스(`planning-box` 신규 레포)** 로 완전 이관. 이 레포의 `/prd/*` 와 `/api/prd/*` 는 삭제됐고, `next.config.ts` 의 `redirects()` 가 `/prd/*` · `/api/prd/*` → `https://planning-box.potenlab.dev/prd/*` 로 308 리다이렉트함. 북마크 유저 보호 목적의 임시 조치. 장기적으로 리다이렉트도 제거 가능.
 
 ## 참고
 - Supabase 클라이언트는 모듈 레벨 싱글톤이 아닌 `getSupabase()` lazy 초기화 사용 (빌드 시 SSR prerender 에러 방지)
@@ -117,10 +115,11 @@ PRD 생성기는 과거 "PotenKit 통합" 맥락으로 potenlab → 여기로 �
 | `business_plans` | poten-paper | poten-paper + potenlab PlanningBoxMyPage | 사업계획서 (포텐페이퍼 본체) |
 | `poten_diagnoses` | poten-paper | poten-paper + potenlab PlanningBoxMyPage | 포텐체커 = 사업계획서 검증 결과 |
 | `idea_validations` | poten-paper | poten-paper + potenlab PlanningBoxMyPage | 아이디어 검증 결과 (B1, 2026-04-15 신설) |
-| `pb_idea_structures` | potenlab | potenlab only | 아이디어 구체화 (IT Track 로컬 도구) |
-| `client_prds` | potenlab | potenlab only | PRD 생성기 결과 |
-| `ui_builder_projects` | potenlab | potenlab only | UI Builder 프로젝트 |
-| `pb_settings` | potenlab | potenlab only | 어드민 프롬프트/설정 |
+| `pb_idea_structures` | planning-box | planning-box only | 아이디어 구체화 (IT Track) |
+| `client_prds` | planning-box | planning-box only | PRD 생성기 결과 (레거시 테이블명, `prd_documents` 와 병행) |
+| `prd_documents` | planning-box | planning-box only | PRD 생성기 결과 (신규 표준) |
+| `ui_builder_projects` | potenlab(Vite) → planning-box 이관 예정 | 양쪽 | UI Builder 프로젝트 |
+| `pb_settings` | potenlab → planning-box | 양쪽 | 어드민 프롬프트/설정 |
 
 ### 네이밍 혼재 주의
 prefix 가 통일 안 됨 (`pb_`, `poten_`, prefix 없음 이 섞임). 역사적 이유:
