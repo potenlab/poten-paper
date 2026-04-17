@@ -46,7 +46,7 @@ export default function SwotNewPage() {
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        const msg = errData.error || errData.details || `HTTP ${response.status}`;
+        const msg = errData.details || errData.error || `HTTP ${response.status}`;
         throw new Error(`생성 실패: ${msg}`);
       }
 
