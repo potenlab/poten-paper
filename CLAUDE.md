@@ -49,10 +49,17 @@ AI 사업계획서 자동 생성 서비스. 예비/초기 창업자가 예비창
 **이미지 생성**: 실질 중단. LLM 프롬프트에서 `imagePrompt` 필드 요청 제거 → `imageRequests.length === 0` 으로 이미지 API 호출 스킵. 데드 코드(`use-image-generation.ts`, `/api/poten-paper/generate-images`, `types.ts` 의 `imagePrompt` 필드)는 나중에 쓸 수도 있어 남겨둠.
 
 **완료**:
-- ✅ Recharts 차트 (bar, pie, line, horizontal-bar) — 통계·매출·성장 추이 등
+- ✅ Recharts 차트 (bar, pie, line, horizontal-bar, funnel) — 통계·매출·성장·TAM/SAM/SOM 등
+- ✅ 테이블 (table, timeline) — 경쟁사 비교표, 추진일정/간트
+- ✅ HTML 시각화 10종: `statCards`, `swot`, `bmCanvas`, `orgChart`, `flowDiagram`, `positioningMap`, `comparisonGrid`, `phaseCards`, `insightBox`, `quoteBox`
+  - 위치: `src/app/poten-paper/new/components/visualizations/`
+  - 디스패처: `visualization-renderer.tsx`
+  - 타입: `src/lib/poten-paper/types.ts` 의 `VisualizationData`
+  - 프롬프트에 각 섹션별 권장 visualization 배치 명시됨
 
-**미구현 (TODO)**:
-- 포지셔닝맵, SWOT, TAM/SAM/SOM 카드, BM캔버스, 조직도, 플로우 다이어그램, 경쟁사 비교표, 간트차트
+**품질 개선 여지 (검토 대상)**:
+- BM 캔버스: 현재 10그리드 레이아웃 — 전통 Osterwalder BM 캔버스 비율과 비교 필요
+- SWOT: 단순 2×2 — `S×O / S×T / W×O / W×T` 교차 전략 추가 가능 (정부지원사업 심사 기준)
 - 참고 사례: https://dionnam.github.io/yecangpe/ (HangulJobs 사업계획서)
 
 ## 환경변수
