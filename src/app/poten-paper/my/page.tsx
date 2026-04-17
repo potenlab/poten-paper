@@ -363,7 +363,7 @@ export default function MyPage() {
 
   const tabs: TabDef[] = [
     { key: 'plans', label: '사업계획서', Icon: FileText, count: plans.length, color: BRAND_COLOR },
-    { key: 'diagnoses', label: '검증', Icon: ShieldCheck, count: diagnoses.length, color: '#0EA5E9' },
+    { key: 'diagnoses', label: '사업계획서 검증', Icon: ShieldCheck, count: diagnoses.length, color: '#0EA5E9' },
     { key: 'validations', label: '아이디어 검증', Icon: Lightbulb, count: validations.length, color: '#f59e0b' },
   ];
 
