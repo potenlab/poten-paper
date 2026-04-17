@@ -38,7 +38,7 @@ const translations = {
           icon: 'file',
           title: '사업계획서 자동 생성',
           description:
-            '예비창업패키지 등 정부지원사업 신청용 사업계획서를 PSST 프레임워크로 작성합니다.',
+            'PSST 프레임워크로 정부지원사업 신청용 계획서 작성. TAM/SAM/SOM, SWOT, BM 캔버스까지 자동 시각화.',
           link: '/poten-paper/new',
         },
         {
@@ -47,13 +47,6 @@ const translations = {
           description:
             '작성한 사업계획서를 AI가 6지표로 분석. Blue/Red Team 피드백 + 개선 제안 제공.',
           link: '/poten-checker/new',
-        },
-        {
-          icon: 'chart',
-          title: '시장분석 & 시각화',
-          description:
-            'TAM/SAM/SOM, 경쟁사 비교, SWOT, BM 캔버스까지 자동으로 생성하고 시각화합니다.',
-          link: '/poten-paper/new',
         },
       ],
     },
@@ -169,7 +162,7 @@ export default function PotenPaperLandingPage() {
             <p className="text-sm md:text-base text-[#666666]">{t.features.subtitle}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {t.features.items.map((item, index) => {
               const Icon = iconMap[item.icon];
               return (
