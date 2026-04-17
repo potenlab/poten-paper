@@ -1,13 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { POTEN_CHECK_SYSTEM_PROMPT } from '@/lib/poten-checker/prompts';
+import { consumeCredits, refundCredits } from '@/lib/credits/consume';
 
 const MODEL_ID = 'google/gemini-2.5-flash';
 
 export async function POST(request: NextRequest) {
+  const supabase = await createClient();
+  let consumedForRefund = false;
+  const refundIfNeeded = async () => {
+    if (!consumedForRefund) return;
+    consumedForRefund = false;
+    await refundCredits(supabase, 'poten_checker', '사업계획서 검증 실패 환불');
+  };
+
   try {
     // Authenticate the user
-    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -19,6 +27,11 @@ export async function POST(request: NextRequest) {
     if (!documentText || typeof documentText !== 'string') {
       return NextResponse.json({ error: 'documentText is required' }, { status: 400 });
     }
+
+    // 크레딧 차감 (BILLING_ENABLED=false 면 no-op)
+    const consume = await consumeCredits(supabase, 'poten_checker', '사업계획서 검증');
+    if (!consume.ok) return consume.response;
+    consumedForRefund = consume.consumed > 0;
 
     const truncatedText = documentText.slice(0, 15000);
 
@@ -44,6 +57,7 @@ export async function POST(request: NextRequest) {
     if (!openrouterResponse.ok) {
       const errorText = await openrouterResponse.text();
       console.error('OpenRouter poten-check error:', errorText);
+      await refundIfNeeded();
       return NextResponse.json({ error: 'Analysis failed' }, { status: openrouterResponse.status });
     }
 
@@ -59,12 +73,14 @@ export async function POST(request: NextRequest) {
       parsed = JSON.parse(content);
     } catch {
       console.error('Failed to parse AI response:', content.slice(0, 200));
+      await refundIfNeeded();
       return NextResponse.json({ error: 'Failed to parse AI response' }, { status: 500 });
     }
 
     return NextResponse.json({ result: parsed });
   } catch (error) {
     console.error('Poten check error:', error);
+    await refundIfNeeded();
     const errorMessage = error instanceof Error ? error.message : String(error);
 
     if (errorMessage.includes('rate limit') || errorMessage.includes('429')) {

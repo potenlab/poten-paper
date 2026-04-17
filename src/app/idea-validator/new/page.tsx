@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Loader2, AlertCircle, ArrowRight } from 'lucide-react';
 import type { IdeaValidationResult } from '@/lib/idea-validator/types';
 import { IdeaResultView } from '../components/idea-result-view';
+import { InsufficientCreditsModal } from '@/components/insufficient-credits-modal';
+import { CREDIT_COSTS } from '@/lib/credits/constants';
 
 const EXAMPLES = [
   '배달 라이더들이 쉴 곳이 없어서, 24시간 무료 쉼터를 지도로 찾고 예약할 수 있는 앱',
@@ -24,6 +26,7 @@ export default function IdeaValidatorNewPage() {
   const [ideaText, setIdeaText] = useState('');
   const [result, setResult] = useState<IdeaValidationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [creditModal, setCreditModal] = useState<{ balance: number; required: number } | null>(null);
 
   const handleAnalyze = async () => {
     const trimmed = ideaText.trim();
@@ -43,6 +46,16 @@ export default function IdeaValidatorNewPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ideaText: trimmed }),
       });
+
+      if (response.status === 402) {
+        const errData = await response.json().catch(() => ({}));
+        setCreditModal({
+          balance: errData.balance ?? 0,
+          required: errData.required ?? CREDIT_COSTS.idea_validator,
+        });
+        setStep('input');
+        return;
+      }
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
@@ -76,6 +89,7 @@ export default function IdeaValidatorNewPage() {
   };
 
   return (
+    <>
     <AnimatePresence mode="wait">
       {step === 'input' && (
         <motion.div
@@ -181,5 +195,14 @@ export default function IdeaValidatorNewPage() {
         </motion.div>
       )}
     </AnimatePresence>
+
+    <InsufficientCreditsModal
+      open={!!creditModal}
+      onClose={() => setCreditModal(null)}
+      balance={creditModal?.balance ?? 0}
+      required={creditModal?.required ?? CREDIT_COSTS.idea_validator}
+      featureLabel="아이디어 검증"
+    />
+    </>
   );
 }

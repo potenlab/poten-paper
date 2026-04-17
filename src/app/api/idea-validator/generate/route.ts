@@ -1,13 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { IDEA_VALIDATOR_SYSTEM_PROMPT } from '@/lib/idea-validator/prompts';
+import { consumeCredits, refundCredits } from '@/lib/credits/consume';
 
 const MODEL_ID = 'google/gemini-2.5-flash';
 
 export async function POST(request: NextRequest) {
+  const supabase = await createClient();
+  let consumedForRefund = false;
+  const refundIfNeeded = async () => {
+    if (!consumedForRefund) return;
+    consumedForRefund = false;
+    await refundCredits(supabase, 'idea_validator', '아이디어 검증 실패 환불');
+  };
+
   try {
     // Auth
-    const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -21,6 +29,11 @@ export async function POST(request: NextRequest) {
     if (!ideaText || typeof ideaText !== 'string' || !ideaText.trim()) {
       return NextResponse.json({ error: 'ideaText is required' }, { status: 400 });
     }
+
+    // 크레딧 차감 (BILLING_ENABLED=false 면 no-op)
+    const consume = await consumeCredits(supabase, 'idea_validator', '아이디어 검증');
+    if (!consume.ok) return consume.response;
+    consumedForRefund = consume.consumed > 0;
 
     const truncated = ideaText.trim().slice(0, 2000);
 
@@ -47,6 +60,7 @@ export async function POST(request: NextRequest) {
     if (!openrouterResponse.ok) {
       const errorText = await openrouterResponse.text();
       console.error('OpenRouter idea-validator error:', errorText);
+      await refundIfNeeded();
       return NextResponse.json({ error: 'Analysis failed' }, { status: openrouterResponse.status });
     }
 
@@ -62,6 +76,7 @@ export async function POST(request: NextRequest) {
       parsed = JSON.parse(content);
     } catch {
       console.error('Failed to parse AI response:', content.slice(0, 200));
+      await refundIfNeeded();
       return NextResponse.json({ error: 'Failed to parse AI response' }, { status: 500 });
     }
 
@@ -74,6 +89,7 @@ export async function POST(request: NextRequest) {
       !parsed.red_team ||
       !Array.isArray(parsed.improvement_tips)
     ) {
+      await refundIfNeeded();
       return NextResponse.json({ error: 'Invalid AI response structure' }, { status: 500 });
     }
 
@@ -102,6 +118,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ result: parsed, id: inserted.id });
   } catch (error) {
     console.error('Idea validator error:', error);
+    await refundIfNeeded();
     const errorMessage = error instanceof Error ? error.message : String(error);
     if (errorMessage.includes('rate limit') || errorMessage.includes('429')) {
       return NextResponse.json(

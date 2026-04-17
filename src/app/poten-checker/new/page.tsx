@@ -10,6 +10,8 @@ import { extractTextFromFile } from '@/lib/poten-checker/utils';
 import { StepInput } from './components/step-input';
 import { StepAnalyzing } from './components/step-analyzing';
 import { StepResult } from './components/step-result';
+import { InsufficientCreditsModal } from '@/components/insufficient-credits-modal';
+import { CREDIT_COSTS } from '@/lib/credits/constants';
 
 export default function PotenCheckerNewPage() {
   const router = useRouter();
@@ -18,6 +20,7 @@ export default function PotenCheckerNewPage() {
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<DiagnosisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [creditModal, setCreditModal] = useState<{ balance: number; required: number } | null>(null);
 
   const saveDiagnosis = async (diagnosisResult: DiagnosisResult) => {
     try {
@@ -60,6 +63,16 @@ export default function PotenCheckerNewPage() {
         body: JSON.stringify({ documentText: text }),
       });
 
+      if (response.status === 402) {
+        const errData = await response.json().catch(() => ({}));
+        setCreditModal({
+          balance: errData.balance ?? 0,
+          required: errData.required ?? CREDIT_COSTS.poten_checker,
+        });
+        setStep('input');
+        return;
+      }
+
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
         throw new Error(errData.error || 'Analysis failed');
@@ -91,6 +104,7 @@ export default function PotenCheckerNewPage() {
   };
 
   return (
+    <>
     <AnimatePresence mode="wait">
       {step === 'input' && (
         <motion.div
@@ -140,5 +154,14 @@ export default function PotenCheckerNewPage() {
         </motion.div>
       )}
     </AnimatePresence>
+
+    <InsufficientCreditsModal
+      open={!!creditModal}
+      onClose={() => setCreditModal(null)}
+      balance={creditModal?.balance ?? 0}
+      required={creditModal?.required ?? CREDIT_COSTS.poten_checker}
+      featureLabel="사업계획서 검증"
+    />
+    </>
   );
 }

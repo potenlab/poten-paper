@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { RESEARCH_SYSTEM_PROMPT, GENERATION_SYSTEM_PROMPT } from '@/lib/poten-paper/prompts';
 import { parseJsonResponse } from '@/lib/poten-paper/parse-json';
 import { getActivePrompts } from '@/lib/poten-paper/get-active-prompts';
+import { consumeCredits, refundCredits } from '@/lib/credits/consume';
 import type { GenerateRequest, ChartData, BusinessPlanDocument } from '@/lib/poten-paper/types';
 
 const MODEL_ID = 'google/gemini-2.5-flash';
@@ -88,9 +89,16 @@ function sanitizeDocument(doc: any): BusinessPlanDocument {
 }
 
 export async function POST(request: NextRequest) {
+  const supabase = await createClient();
+  let consumedForRefund = false;
+  const refundIfNeeded = async () => {
+    if (!consumedForRefund) return;
+    consumedForRefund = false;
+    await refundCredits(supabase, 'poten_paper', '사업계획서 생성 실패 환불');
+  };
+
   try {
     // Authenticate the user
-    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -102,6 +110,11 @@ export async function POST(request: NextRequest) {
     if (!body.inputType || (body.inputType === 'upload' && !body.documentText) || (body.inputType === 'form' && !body.ideaText && !body.formData)) {
       return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
     }
+
+    // 크레딧 차감 (BILLING_ENABLED=false 면 no-op)
+    const consume = await consumeCredits(supabase, 'poten_paper', '사업계획서 생성');
+    if (!consume.ok) return consume.response;
+    consumedForRefund = consume.consumed > 0;
 
     let userInput = buildUserInput(body);
     userInput = userInput.slice(0, 20000);
@@ -178,6 +191,7 @@ export async function POST(request: NextRequest) {
     if (!researchResponse.ok) {
       const errorText = await researchResponse.text();
       console.error('OpenRouter research error:', errorText);
+      await refundIfNeeded();
       return NextResponse.json({ error: 'Research phase failed' }, { status: researchResponse.status });
     }
 
@@ -189,6 +203,7 @@ export async function POST(request: NextRequest) {
       researchResult = parseJsonResponse(researchContent);
     } catch {
       console.error('Failed to parse research response:', researchContent.slice(0, 300));
+      await refundIfNeeded();
       return NextResponse.json({ error: 'Failed to parse research data' }, { status: 500 });
     }
 
@@ -229,6 +244,7 @@ ${JSON.stringify(researchResult, null, 2)}
     if (!generationResponse.ok) {
       const errorText = await generationResponse.text();
       console.error('OpenRouter generation error:', errorText);
+      await refundIfNeeded();
       return NextResponse.json({ error: 'Generation phase failed' }, { status: generationResponse.status });
     }
 
@@ -240,6 +256,7 @@ ${JSON.stringify(researchResult, null, 2)}
       generationResult = parseJsonResponse(generationContent);
     } catch {
       console.error('Failed to parse generation response:', generationContent.slice(0, 300));
+      await refundIfNeeded();
       return NextResponse.json({ error: 'Failed to parse business plan' }, { status: 500 });
     }
 
@@ -255,6 +272,7 @@ ${JSON.stringify(researchResult, null, 2)}
     });
   } catch (error) {
     console.error('Poten paper generate error:', error);
+    await refundIfNeeded();
     const errorMessage = error instanceof Error ? error.message : String(error);
 
     if (errorMessage.includes('rate limit') || errorMessage.includes('429')) {

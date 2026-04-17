@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, Sparkles, ArrowRight, Info } from 'lucide-react';
+import { Check, Sparkles, ArrowRight, Info, ExternalLink } from 'lucide-react';
+import { BILLING_ENABLED } from '@/lib/credits/constants';
 
 type Billing = 'monthly' | 'yearly';
+
+const PURCHASE_URL = process.env.NEXT_PUBLIC_PURCHASE_URL || 'https://thepotential.kr/credits';
 
 interface Plan {
   name: string;
@@ -170,20 +173,29 @@ export default function PricingPage() {
                     ))}
                   </ul>
 
-                  <button
-                    type="button"
-                    disabled={plan.ctaDisabled}
-                    className={`w-full h-11 rounded-xl text-sm font-semibold transition-all inline-flex items-center justify-center gap-2 ${
-                      plan.ctaDisabled
-                        ? 'bg-gray-100 text-[#999999] cursor-not-allowed'
-                        : plan.highlight
-                        ? 'bg-gradient-to-r from-[#14A697] to-[#0079FF] text-white hover:shadow-lg'
-                        : 'bg-[#1A1A1A] text-white hover:bg-black'
-                    }`}
-                  >
-                    {plan.ctaLabel}
-                    {!plan.ctaDisabled && <ArrowRight className="w-4 h-4" />}
-                  </button>
+                  {BILLING_ENABLED && plan.priceMonthly > 0 ? (
+                    <a
+                      href={PURCHASE_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`w-full h-11 rounded-xl text-sm font-semibold transition-all inline-flex items-center justify-center gap-2 ${
+                        plan.highlight
+                          ? 'bg-gradient-to-r from-[#14A697] to-[#0079FF] text-white hover:shadow-lg'
+                          : 'bg-[#1A1A1A] text-white hover:bg-black'
+                      }`}
+                    >
+                      더포텐셜에서 구독
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled
+                      className="w-full h-11 rounded-xl text-sm font-semibold bg-gray-100 text-[#999999] cursor-not-allowed inline-flex items-center justify-center gap-2"
+                    >
+                      {plan.priceMonthly === 0 ? '현재 플랜' : '준비중'}
+                    </button>
+                  )}
                 </div>
               );
             })}

@@ -26,6 +26,8 @@ import { StepUpload } from './components/step-upload';
 import { StepForm } from './components/step-form';
 import { StepProcessing } from './components/step-processing';
 import { PaperResultLayout } from './components/result/paper-result-layout';
+import { InsufficientCreditsModal } from '@/components/insufficient-credits-modal';
+import { CREDIT_COSTS } from '@/lib/credits/constants';
 
 export default function PotenPaperNewPage() {
   const router = useRouter();
@@ -62,6 +64,7 @@ export default function PotenPaperNewPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [pendingSave, setPendingSave] = useState(false);
+  const [creditModal, setCreditModal] = useState<{ balance: number; required: number } | null>(null);
 
   const { regeneratingSection, regenerateV2, undoV2, undoHistory } = useSectionRegeneration({
     document,
@@ -167,6 +170,16 @@ export default function PotenPaperNewPage() {
       });
 
       clearTimeout(phaseTimer);
+
+      if (response.status === 402) {
+        const errData = await response.json().catch(() => ({}));
+        setCreditModal({
+          balance: errData.balance ?? 0,
+          required: errData.required ?? CREDIT_COSTS.poten_paper,
+        });
+        setStep('input');
+        return;
+      }
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
@@ -416,6 +429,13 @@ export default function PotenPaperNewPage() {
         )}
       </AnimatePresence>
 
+      <InsufficientCreditsModal
+        open={!!creditModal}
+        onClose={() => setCreditModal(null)}
+        balance={creditModal?.balance ?? 0}
+        required={creditModal?.required ?? CREDIT_COSTS.poten_paper}
+        featureLabel="사업계획서 생성"
+      />
     </div>
   );
 }
