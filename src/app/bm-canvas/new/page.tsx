@@ -46,7 +46,8 @@ export default function BmCanvasNewPage() {
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || '생성 실패');
+        const msg = errData.error || errData.details || `HTTP ${response.status}`;
+        throw new Error(`생성 실패: ${msg}`);
       }
 
       const data = await response.json();

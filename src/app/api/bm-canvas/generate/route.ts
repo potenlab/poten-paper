@@ -41,19 +41,27 @@ export async function POST(request: NextRequest) {
           },
         ],
         temperature: 0.4,
-        max_tokens: 2500,
+        max_tokens: 4000,
         response_format: { type: 'json_object' },
       }),
     });
 
     if (!openrouterResponse.ok) {
       const errorText = await openrouterResponse.text();
-      console.error('OpenRouter bm-canvas error:', errorText);
-      return NextResponse.json({ error: 'Generation failed' }, { status: openrouterResponse.status });
+      console.error('[bm-canvas] OpenRouter error:', openrouterResponse.status, errorText);
+      return NextResponse.json(
+        { error: `OpenRouter ${openrouterResponse.status}: ${errorText.slice(0, 200)}` },
+        { status: openrouterResponse.status },
+      );
     }
 
     const data = await openrouterResponse.json();
     let content = (data.choices?.[0]?.message?.content || '').trim();
+
+    if (!content) {
+      console.error('[bm-canvas] Empty content from LLM. Full response:', JSON.stringify(data).slice(0, 500));
+      return NextResponse.json({ error: 'empty_response' }, { status: 500 });
+    }
 
     const jsonBlockMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
     if (jsonBlockMatch) content = jsonBlockMatch[1].trim();
@@ -61,13 +69,17 @@ export async function POST(request: NextRequest) {
     let parsed: any;
     try {
       parsed = JSON.parse(content);
-    } catch {
-      console.error('Failed to parse AI response:', content.slice(0, 200));
-      return NextResponse.json({ error: 'Failed to parse AI response' }, { status: 500 });
+    } catch (e) {
+      console.error('[bm-canvas] JSON parse failed. Content:', content.slice(0, 500));
+      return NextResponse.json(
+        { error: 'parse_failed', snippet: content.slice(0, 200) },
+        { status: 500 },
+      );
     }
 
     if (!parsed.canvas || !parsed.summary) {
-      return NextResponse.json({ error: 'Invalid response structure' }, { status: 500 });
+      console.error('[bm-canvas] Missing canvas/summary. Parsed:', JSON.stringify(parsed).slice(0, 300));
+      return NextResponse.json({ error: 'missing_canvas_or_summary' }, { status: 500 });
     }
 
     const requiredKeys = [
@@ -83,7 +95,8 @@ export async function POST(request: NextRequest) {
     ];
     for (const k of requiredKeys) {
       if (!Array.isArray(parsed.canvas[k])) {
-        return NextResponse.json({ error: `missing block: ${k}` }, { status: 500 });
+        console.error(`[bm-canvas] missing block ${k}. canvas:`, JSON.stringify(parsed.canvas).slice(0, 300));
+        return NextResponse.json({ error: `missing_block_${k}` }, { status: 500 });
       }
     }
 
