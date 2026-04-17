@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   Sparkles,
   FileText,
@@ -9,7 +10,7 @@ import {
   Lightbulb,
   TrendingUp,
   ArrowRight,
-  CheckCircle,
+  ShieldCheck,
 } from 'lucide-react';
 
 const translations = {
@@ -28,27 +29,31 @@ const translations = {
       items: [
         {
           icon: 'lightbulb',
-          title: '아이디어 진단',
+          title: '아이디어 검증',
           description:
-            '사업 아이디어의 시장성, 경쟁력, 실현가능성을 AI가 분석하고 점수를 매깁니다.',
+            '사업 아이디어의 시장성·수익성·실현가능성을 AI가 분석하고 점수를 매깁니다.',
+          link: '/idea-validator/new',
         },
         {
           icon: 'file',
           title: '사업계획서 자동 생성',
           description:
             '예비창업패키지 등 정부지원사업 신청용 사업계획서를 PSST 프레임워크로 작성합니다.',
+          link: '/poten-paper/new',
+        },
+        {
+          icon: 'shield',
+          title: '사업계획서 검증',
+          description:
+            '작성한 사업계획서를 AI가 6지표로 분석. Blue/Red Team 피드백 + 개선 제안 제공.',
+          link: '/poten-checker/new',
         },
         {
           icon: 'chart',
           title: '시장분석 & 시각화',
           description:
-            'TAM/SAM/SOM 분석, 경쟁사 비교, SWOT 분석을 자동으로 생성하고 차트로 시각화합니다.',
-        },
-        {
-          icon: 'check',
-          title: 'BM 캔버스 & 로드맵',
-          description:
-            '비즈니스 모델 캔버스, 수익 구조, 로드맵까지 한 번에 만들어집니다.',
+            'TAM/SAM/SOM, 경쟁사 비교, SWOT, BM 캔버스까지 자동으로 생성하고 시각화합니다.',
+          link: '/poten-paper/new',
         },
       ],
     },
@@ -92,7 +97,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   lightbulb: Lightbulb,
   file: FileText,
   chart: TrendingUp,
-  check: CheckCircle,
+  shield: ShieldCheck,
 };
 
 export default function PotenPaperLandingPage() {
@@ -168,21 +173,25 @@ export default function PotenPaperLandingPage() {
             {t.features.items.map((item, index) => {
               const Icon = iconMap[item.icon];
               return (
-                <div
+                <Link
                   key={index}
-                  className="group bg-white rounded-xl p-6 border border-[#E7E7E7] hover:border-[#14A697] hover:shadow-[0px_2px_8px_rgba(0,0,0,0.06)] transition-all duration-300 relative overflow-hidden"
+                  href={item.link}
+                  className="group bg-white rounded-xl p-6 border border-[#E7E7E7] hover:border-[#14A697] hover:shadow-[0px_2px_8px_rgba(0,0,0,0.06)] transition-all duration-300 relative overflow-hidden block"
                 >
                   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#14A697]/10 to-transparent rounded-bl-full" />
                   <div className="relative">
                     <div className="w-12 h-12 bg-gradient-to-br from-[#14A697] to-[#0079FF] rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                       <Icon className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">{item.title}</h3>
+                    <h3 className="text-lg font-bold text-[#1A1A1A] mb-2 flex items-center gap-1.5">
+                      {item.title}
+                      <ArrowRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#14A697]" />
+                    </h3>
                     <p className="text-sm text-[#666666] leading-relaxed">
                       {item.description}
                     </p>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>

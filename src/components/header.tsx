@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { useUserCredits } from '@/hooks/use-user-credits';
@@ -10,12 +11,13 @@ import {
   LogOut,
   User,
   Coins,
+  FileText,
   ExternalLink,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const BRAND_COLOR = '#0EA5E9';
-const POTENLAB_URL = 'https://potenlab.dev';
+const THE_POTENTIAL_URL = 'https://thepotential.kr';
 
 function CreditBadge({ userId }: { userId: string }) {
   const { data } = useUserCredits(userId);
@@ -30,6 +32,91 @@ function CreditBadge({ userId }: { userId: string }) {
         </span>
       </span>
     </Link>
+  );
+}
+
+function UserMenu({ email, onLogout }: { email: string; onLogout: () => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const initial = (email[0] ?? 'U').toUpperCase();
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+        style={{ backgroundColor: BRAND_COLOR }}
+        aria-label="사용자 메뉴"
+      >
+        {initial}
+      </button>
+
+      {open && (
+        <div className="absolute top-full right-0 mt-2 w-64 bg-background border border-border rounded-xl shadow-lg overflow-hidden z-50">
+          <div className="px-4 py-3 border-b border-border">
+            <p className="text-xs text-muted-foreground">로그인 계정</p>
+            <p className="text-sm font-medium text-foreground truncate mt-0.5">{email}</p>
+          </div>
+
+          <nav className="py-1">
+            <Link
+              href="/poten-paper/my"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors"
+            >
+              <FileText className="w-4 h-4 text-muted-foreground" />
+              마이페이지
+            </Link>
+
+            <a
+              href={`${THE_POTENTIAL_URL}/profile`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors"
+            >
+              <User className="w-4 h-4 text-muted-foreground" />
+              내 프로필
+              <ExternalLink className="w-3 h-3 text-muted-foreground ml-auto" />
+            </a>
+
+            <a
+              href={`${THE_POTENTIAL_URL}/mypage`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors"
+            >
+              <Coins className="w-4 h-4 text-amber-500" />
+              내 크레딧
+              <ExternalLink className="w-3 h-3 text-muted-foreground ml-auto" />
+            </a>
+          </nav>
+
+          <div className="border-t border-border py-1">
+            <button
+              onClick={() => {
+                setOpen(false);
+                onLogout();
+              }}
+              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              로그아웃
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -64,21 +151,7 @@ export function Header() {
           ) : user ? (
             <>
               <CreditBadge userId={user.id} />
-              <Link href="/poten-paper/my">
-                <Button variant="ghost" size="sm" className="gap-1.5 text-sm">
-                  <User className="w-4 h-4" />
-                  <span className="hidden sm:inline">마이페이지</span>
-                </Button>
-              </Link>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLogout}
-                className="gap-1.5 text-sm text-muted-foreground"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">로그아웃</span>
-              </Button>
+              <UserMenu email={user.email ?? ''} onLogout={handleLogout} />
             </>
           ) : (
             <Link href="/login?next=/poten-paper">
@@ -88,16 +161,6 @@ export function Header() {
               </Button>
             </Link>
           )}
-
-          <a
-            href={POTENLAB_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Potenlab
-            <ExternalLink className="w-3 h-3" />
-          </a>
         </div>
       </div>
     </header>
