@@ -180,9 +180,12 @@ function Tabs({
             <Icon className="w-4 h-4" style={{ color: isActive ? t.color : undefined }} />
             {t.label}
             <span
-              className={`text-xs px-1.5 py-0.5 rounded ${
-                isActive ? 'bg-muted text-foreground' : 'bg-muted/50 text-muted-foreground'
-              }`}
+              className="text-xs px-1.5 py-0.5 rounded font-semibold"
+              style={
+                isActive
+                  ? { backgroundColor: t.color, color: '#fff' }
+                  : { backgroundColor: 'rgba(0,0,0,0.05)', color: '#9ca3af' }
+              }
             >
               {t.count}
             </span>
@@ -368,7 +371,7 @@ export default function MyPage() {
   ];
 
   return (
-    <div className="max-w-[900px] mx-auto px-4 sm:px-8 py-10">
+    <div className="max-w-[1156px] mx-auto px-4 sm:px-8 py-10">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-foreground">마이페이지</h1>
       </div>
