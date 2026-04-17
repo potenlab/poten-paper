@@ -9,10 +9,11 @@ import { BRAND_COLOR } from '@/lib/poten-paper/constants';
 interface StepFormProps {
   onSubmit: (ideaText: string) => void;
   onBack: () => void;
+  initialIdea?: string;
 }
 
-export function StepForm({ onSubmit, onBack }: StepFormProps) {
-  const [ideaText, setIdeaText] = useState('');
+export function StepForm({ onSubmit, onBack, initialIdea = '' }: StepFormProps) {
+  const [ideaText, setIdeaText] = useState(initialIdea);
   const [error, setError] = useState('');
 
   const handleSubmit = () => {

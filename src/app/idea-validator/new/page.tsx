@@ -177,7 +177,7 @@ export default function IdeaValidatorNewPage() {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4 }}
         >
-          <IdeaResultView result={result} onReset={handleReset} />
+          <IdeaResultView result={result} ideaText={ideaText} onReset={handleReset} />
         </motion.div>
       )}
     </AnimatePresence>

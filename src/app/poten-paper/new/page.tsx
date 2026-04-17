@@ -37,6 +37,18 @@ export default function PotenPaperNewPage() {
   const [step, setStep] = useState<PaperStep>('input-method');
   const [inputMethod, setInputMethod] = useState<InputMethod | null>(null);
   const [processingPhase, setProcessingPhase] = useState<'research' | 'generating'>('research');
+  const [initialIdea, setInitialIdea] = useState<string>('');
+
+  // Read ?idea=... from query string (e.g. from idea-validator CTA or landing hero) and jump straight to form
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ideaFromQuery = params.get('idea');
+    if (ideaFromQuery) {
+      setInitialIdea(ideaFromQuery);
+      setInputMethod('form');
+      setStep('input');
+    }
+  }, []);
 
   // Result data (v2)
   const [resultTitle, setResultTitle] = useState('');
@@ -383,7 +395,11 @@ export default function PotenPaperNewPage() {
             transition={{ duration: 0.4 }}
             className="pt-8 pb-24"
           >
-            <StepForm onSubmit={handleFormSubmit} onBack={handleBackToMethod} />
+            <StepForm
+              onSubmit={handleFormSubmit}
+              onBack={handleBackToMethod}
+              initialIdea={initialIdea}
+            />
           </motion.div>
         )}
 

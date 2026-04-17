@@ -17,6 +17,7 @@ export function ResultClient({ resultId }: Props) {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [result, setResult] = useState<IdeaValidationResult | null>(null);
+  const [ideaText, setIdeaText] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,6 +44,7 @@ export function ResultClient({ resultId }: Props) {
           improvement_tips: data.improvement_tips,
           analyzed_at: data.created_at,
         });
+        setIdeaText(data.idea_text ?? '');
       } else {
         setError('결과를 찾을 수 없습니다.');
       }
@@ -93,7 +95,11 @@ export function ResultClient({ resultId }: Props) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <IdeaResultView result={result} onReset={() => router.push('/idea-validator/new')} />
+      <IdeaResultView
+        result={result}
+        ideaText={ideaText}
+        onReset={() => router.push('/idea-validator/new')}
+      />
     </motion.div>
   );
 }

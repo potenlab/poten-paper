@@ -1,12 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sparkles, RefreshCw, TrendingUp, DollarSign, CheckCircle, Star, Clock, Shield, Flame, Lightbulb } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Sparkles, RefreshCw, TrendingUp, DollarSign, CheckCircle, Star, Clock, Shield, Flame, Lightbulb, FileText, ArrowRight } from 'lucide-react';
 import type { IdeaValidationResult, ScoreDimension } from '@/lib/idea-validator/types';
 import { DIMENSIONS } from '@/lib/idea-validator/types';
 
 interface Props {
   result: IdeaValidationResult;
+  ideaText?: string;
   onReset?: () => void;
 }
 
@@ -33,8 +35,17 @@ function overallLabel(score: number): { label: string; color: string } {
   return { label: '재고 필요', color: 'text-red-600' };
 }
 
-export function IdeaResultView({ result, onReset }: Props) {
+export function IdeaResultView({ result, ideaText, onReset }: Props) {
+  const router = useRouter();
   const overall = overallLabel(result.overall_score);
+
+  const handleCreatePlan = () => {
+    const text = ideaText ?? result.summary ?? '';
+    const url = text
+      ? `/poten-paper/new?idea=${encodeURIComponent(text)}`
+      : '/poten-paper/new';
+    router.push(url);
+  };
 
   return (
     <div className="max-w-[820px] mx-auto px-4 sm:px-8 py-10">
@@ -142,6 +153,31 @@ export function IdeaResultView({ result, onReset }: Props) {
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      {/* Next step — Create business plan */}
+      <section className="mb-8 rounded-2xl border border-[#0079FF]/30 bg-gradient-to-br from-[#0079FF]/5 to-[#14A697]/5 p-6 sm:p-8">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0079FF] to-[#14A697] flex items-center justify-center shrink-0">
+            <FileText className="w-6 h-6 text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-[16px] font-bold text-foreground mb-1">
+              다음 단계 · 사업계획서로 발전시키기
+            </h3>
+            <p className="text-[13px] text-muted-foreground mb-4 leading-relaxed">
+              이 아이디어를 정부지원사업 신청용 사업계획서로 바로 이어서 작성할 수 있어요. 검증한 내용이 자동으로 전달됩니다.
+            </p>
+            <button
+              type="button"
+              onClick={handleCreatePlan}
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-gradient-to-r from-[#0079FF] to-[#14A697] text-white text-[14px] font-semibold hover:shadow-lg transition-all"
+            >
+              이 아이디어로 계획서 만들기
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </section>
 
