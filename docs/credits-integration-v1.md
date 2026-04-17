@@ -2,58 +2,53 @@
 
 **작성일**: 2026-04-17
 **대상**: the-potential 팀 + poten-paper 팀
-**목적**: poten-paper (사업계획서·포텐체커·아이디어 검증) 에서 the-potential 의 크레딧 시스템을 소비하기 위한 합의 문서
+**목적**: poten-paper 에서 the-potential 크레딧을 **소진(consume)** 하기 위한 합의 문서
 
 ---
 
-## 배경
+## 역할 분담 (범위 명확화)
 
-현재 the-potential 레포 (`src/features/credits/`) 에 크레딧 시스템이 구축돼 있음:
+| 영역 | 담당 |
+|---|---|
+| 크레딧 **적립** (미션·구매·프로모션 등) | **the-potential** |
+| 크레딧 **조회** (balance 표시) | 양쪽 공용 |
+| 크레딧 **소진** (포텐페이퍼·체커·아이디어 검증 사용 시 차감) | **poten-paper** |
+| 적립 단가·방법·프로모션 정책 | **the-potential 재량** (이 문서 범위 밖) |
+
+**이 문서는 오직 소진(consume) 쪽에만 집중**. 유저가 크레딧을 어떻게 얻는지 (미션·결제·프로모션) 는 the-potential 내부 문제로, 여기서 다루지 않음.
+
+---
+
+## 현재 the-potential 크레딧 스키마 (참고)
+
 - 4개 테이블: `credit_missions`, `user_credits`, `credit_rewards`, `credit_transactions`
-- RPC 1개: `earn_mission_credit()` (미션 적립용)
-- 리워드 2종: `poten_checker_1` (5c), `poten_paper_1` (100c), `basic_1month` (500c)
+- RPC: `earn_mission_credit()` (적립용, the-potential 소유)
+- 기존 리워드: `poten_checker_1` (5c), `poten_paper_1` (100c), `basic_1month` (500c)
 
-poten-paper 는 이 테이블을 **공유 Supabase 에서 직접 읽을 수 있지만** (`user_credits.balance` 조회는 이미 동작), **차감하는 코드는 아직 없음**. Phase 1 크레딧 과금 구현을 위해 해결해야 할 이슈들을 정리.
-
----
-
-## 발견된 이슈 4가지
-
-### 1. 🔴 보안 (심각)
-
-현재 `useRedeemReward` 훅이 **클라이언트에서 직접** `user_credits.balance` 를 수정함. RLS 정책이 `user_id = auth.uid()` 만 체크하고 변경량은 검증하지 않아서, 악의적 유저가 DevTools 열고 `balance += 1000` 업데이트를 호출하면 통과됨.
-
-**현재 취약 코드**: `the-potential/src/features/credits/api/queries.ts:177-199`
-
-### 2. 🟡 "사용권" 플로우 불명확
-
-유저가 the-potential 에서 `poten_paper_1` 리워드 100c 주고 교환하면 `credit_transactions` 에 `type='reward'` 로 기록됨. 그런데:
-- 포텐페이퍼 앱은 이 "사용권 1개 있음" 을 어떻게 확인?
-- 사용권을 쓴 뒤에는 어디에 "소비 완료" 로 표시?
-- 현재는 기록만 남고 **실제 사용 추적 부재**
-
-### 3. 🟡 유료 충전 경로 없음
-
-현재 크레딧 획득은 **미션 수행** (하루 최대 90c) 만 존재. 돈으로 크레딧 사는 플로우 없음. 포텐페이퍼 1회(100c) 써보려면 **최소 이틀 매일 미션 수행** 필요 → 실사용자에게 너무 장벽 높음.
-
-### 4. 🟡 아이디어 검증 리워드 누락
-
-`credit_rewards` 에 `poten_checker_1`, `poten_paper_1` 만 있고 **아이디어 검증용 리워드 없음**.
+poten-paper 는 `user_credits.balance` 조회는 이미 동작 중. **차감 로직만 추가하면 됨**.
 
 ---
 
-## 제안 정리
+## 이 스펙에서 필요한 것 2가지
 
-### 핵심 결정 4가지
+### 1. 🔴 서버 측 "소진" 경로 (보안)
 
-1. **"즉석 차감 모델" 채택** — 선구매 사용권 추적 방식 폐기. 포텐페이퍼 사용 시점에 balance 바로 차감. 단순, 직관적.
-2. **`consume_credits` RPC 신설** — SECURITY DEFINER + `auth.uid()` 기반 + `FOR UPDATE` 잠금으로 안전한 차감 + credit_transactions 원자적 기록.
-3. **`refund_credits` RPC 신설** — 생성 실패 시 자동 환불.
+현재 the-potential 쪽의 `useRedeemReward` 는 **클라이언트에서 직접** `user_credits.balance` 를 수정함 ([queries.ts:177-199](../../the-potential/src/features/credits/api/queries.ts#L177)). RLS 가 `user_id = auth.uid()` 만 체크하고 변경량은 검증 안 해서 이론적으로 DevTools 에서 balance 자기증식 가능.
+
+**참고**: 이건 적립 경로의 이슈이고 the-potential 팀이 판단할 문제. 하지만 **poten-paper 쪽 차감은 처음부터 안전하게** SECURITY DEFINER RPC 로 깔아야 함.
+
+### 2. 🟡 아이디어 검증 단가 미정
+
+`credit_rewards` 에 `idea_validator` 리워드 없음 → 추가 필요 (단가 제안 10c).
+
+---
+
+## 제안
+
+1. **"즉석 차감 모델" 채택** — 선구매 사용권 추적 방식 채택 안 함. poten-paper 사용 시점에 `user_credits.balance -= N` 바로 차감. 단순, 직관적.
+2. **`consume_credits` RPC 신설** — SECURITY DEFINER + `auth.uid()` 기반 + `FOR UPDATE` 잠금. credit_transactions 원자적 기록.
+3. **`refund_credits` RPC 신설** — poten-paper 측에서 생성 실패 시 자동 환불.
 4. **`idea_validator_1` 리워드 추가** — 10c (포텐체커 5c 보다 약간 무겁게)
-
-### 유료 충전 플로우는 별도 Phase 로 미룸
-
-이 스펙에서는 범위 밖. 합의되면 v2 에서 다룸.
 
 ---
 
@@ -274,8 +269,6 @@ export async function POST(request: NextRequest) {
 | 포텐체커 (사업계획서 검증) | **5c** | 기존 `poten_checker_1` reward 와 일치 · 1회 LLM |
 | 아이디어 검증 | **10c** | 신규 제안 · 1회 LLM · 포텐체커보다 입력 부담 약간 큼 |
 
-→ 미션으로 최대치 적립 시 하루 90c 획득 가능. 포텐페이퍼 1회도 빠듯 → 유료 충전 필요성 증명.
-
 ---
 
 ## 잔액 부족 UX (poten-paper 측)
@@ -287,12 +280,11 @@ export async function POST(request: NextRequest) {
 │  사업계획서 생성은 100c 가 필요해요       │
 │  현재 잔액: 50c · 부족: 50c              │
 │                                         │
-│  [더포텐셜에서 미션 수행 ↗]              │
-│  [충전하기 · 준비중]                     │
+│  [더포텐셜에서 크레딧 받기 ↗]            │
 └─────────────────────────────────────────┘
 ```
 
-유료 충전 나오기 전까지는 **더포텐셜 미션 페이지** 로 유도.
+**더포텐셜로 리다이렉트** (미션 / 결제 / 프로모션 등 적립 방식은 더포텐셜 재량).
 
 ---
 
@@ -300,23 +292,23 @@ export async function POST(request: NextRequest) {
 
 ### the-potential 팀
 - [ ] 이 스펙 리뷰 & 피드백
-- [ ] `migration.sql` 에 위 3개 섹션 추가 (reward + 2 RPC)
+- [ ] `migration.sql` 에 위 3개 섹션 추가 (idea_validator_1 reward + consume_credits + refund_credits RPC)
 - [ ] Supabase 대시보드에서 새 migration 실행
-- [ ] `useRedeemReward` 클라이언트 직접 update 로직을 `consume_credits` RPC 호출로 리팩터 (보안 개선)
-- [ ] 유료 크레딧 충전 플로우 설계 시작 (v2)
+- [ ] (선택) `useRedeemReward` 보안 개선 — 기존 리워드 교환 경로도 `consume_credits` RPC 로 전환 고려
 
 ### poten-paper 팀 (이 레포)
 - [ ] RPC 배포 확인
-- [ ] `/api/poten-paper/generate` 에 consume + refund 로직 추가
+- [ ] `/api/poten-paper/generate` 에 consume + refund 로직 추가 (100c)
 - [ ] `/api/poten-check/*` 에 consume + refund 추가 (5c)
 - [ ] `/api/idea-validator/generate` 에 consume + refund 추가 (10c)
-- [ ] 402 응답 시 클라이언트에서 "크레딧 부족" 모달 표시
+- [ ] 402 `insufficient_credits` 응답 시 클라이언트에서 "크레딧 부족 → 더포텐셜로" 모달
 - [ ] 마이페이지 "베타 · 무제한 무료" 카드를 실제 잔액 카드로 교체
 - [ ] 헤더 `CreditBadge` 실시간 갱신 유지
 
-### 공동
-- [ ] 베타 종료 시점 합의 (언제부터 크레딧 과금 활성화?)
-- [ ] 아이디어 검증 단가 10c 최종 확정 (or 변경)
+### 공동 합의 필요
+- [ ] 베타 종료 시점 (언제부터 과금 활성화?)
+- [ ] 아이디어 검증 단가 10c 최종 확정
+- [ ] 더포텐셜 "크레딧 획득 페이지" URL 확정 (잔액 부족 모달의 리다이렉트 대상)
 
 ---
 
@@ -324,11 +316,10 @@ export async function POST(request: NextRequest) {
 
 1. **베타 기간 처리**: 과금 ON 전환 시점을 환경변수 플래그로 할지, 코드 커밋으로 할지?
 2. **관리자 무제한**: admin 계정은 consume_credits 우회? 따로 처리?
-3. **미션 보상 단가 재검토**: 하루 최대 90c 는 포텐페이퍼 1회도 안 됨 — 보상 상향 or 유료 충전 빠른 도입?
-4. **멤버십 플랜과의 관계**: Basic/Premium 멤버십 유저는 크레딧 무제한? 아니면 매월 크레딧 자동 지급?
+3. **멤버십 플랜과의 관계**: Basic/Premium 멤버십 유저는 크레딧 차감 면제? 아니면 매월 크레딧 자동 지급? (the-potential 정책 — 합의 필요)
 
 ---
 
 ## 버전 히스토리
 
-- **v1 (2026-04-17)**: 최초 작성. 즉석 차감 모델 제안.
+- **v1 (2026-04-17)**: 최초 작성. 즉석 차감 모델 + poten-paper 는 소진(consume)만 담당하는 방향으로 스코프 명확화.
