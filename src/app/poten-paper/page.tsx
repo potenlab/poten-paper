@@ -11,6 +11,10 @@ import {
   TrendingUp,
   ArrowRight,
   ShieldCheck,
+  LayoutGrid,
+  Target,
+  Crosshair,
+  Table2,
 } from 'lucide-react';
 
 const translations = {
@@ -219,6 +223,71 @@ export default function PotenPaperLandingPage() {
                 <p className="text-sm text-[#666666] leading-relaxed">{step.description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Mini Tools — 무료 빠른 생성 */}
+      <section className="px-6 py-16">
+        <div className="max-w-[1156px] mx-auto">
+          <div className="text-center mb-10">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-700 text-[12px] font-semibold mb-3">
+              <Sparkles className="w-3 h-3" />
+              무료 · 30초
+            </span>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-3">
+              빠르게 시작하는 미니 도구
+            </h2>
+            <p className="text-sm md:text-base text-[#666666]">
+              사업계획서를 쓰기 전, 아이디어를 다양한 관점으로 검토해보세요
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              {
+                Icon: LayoutGrid,
+                title: 'BM 캔버스',
+                desc: '9블록 비즈니스 모델',
+                link: '/bm-canvas/new',
+              },
+              {
+                Icon: Target,
+                title: 'SWOT 분석',
+                desc: '강점·약점·기회·위협',
+                link: '/swot/new',
+              },
+              {
+                Icon: Crosshair,
+                title: '포지셔닝맵',
+                desc: '시장 내 우리 위치',
+                link: '/positioning-map/new',
+              },
+              {
+                Icon: Table2,
+                title: '경쟁사 비교표',
+                desc: '기능별 체크마크 대결',
+                link: '/competitors/new',
+              },
+            ].map((tool, i) => {
+              const Icon = tool.Icon;
+              return (
+                <Link
+                  key={i}
+                  href={tool.link}
+                  className="group bg-white rounded-xl p-5 border border-[#E7E7E7] hover:border-[#0079FF] hover:shadow-[0px_2px_8px_rgba(0,0,0,0.06)] transition-all duration-300 block"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-[#0079FF]/10 flex items-center justify-center mb-3 group-hover:bg-[#0079FF]/15 transition-colors">
+                    <Icon className="w-5 h-5 text-[#0079FF]" />
+                  </div>
+                  <h3 className="text-sm font-bold text-[#1A1A1A] mb-1 flex items-center gap-1">
+                    {tool.title}
+                    <ArrowRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#0079FF]" />
+                  </h3>
+                  <p className="text-xs text-[#666666] leading-relaxed">{tool.desc}</p>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
