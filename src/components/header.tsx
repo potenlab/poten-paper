@@ -53,6 +53,12 @@ export function Header() {
         </Link>
 
         <div className="flex items-center gap-2">
+          <Link href="/pricing">
+            <Button variant="ghost" size="sm" className="text-sm">
+              가격
+            </Button>
+          </Link>
+
           {loading ? (
             <div className="w-20 h-8 bg-muted/30 rounded-lg animate-pulse" />
           ) : user ? (

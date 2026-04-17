@@ -81,12 +81,6 @@ export default function PricingPage() {
             파운더의 성장 단계에 맞는 플랜을 선택하세요. 결제 · 구독은 더포텐셜에서 관리됩니다.
           </p>
 
-          {/* Beta banner */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-700 text-sm font-medium mb-8">
-            <Sparkles className="w-4 h-4" />
-            베타 기간 · 로그인만 하면 모든 기능 무료
-          </div>
-
           {/* Billing toggle */}
           <div className="inline-flex items-center gap-1 p-1 rounded-full bg-gray-100 border border-[#E7E7E7]">
             <button
@@ -195,12 +189,17 @@ export default function PricingPage() {
             })}
           </div>
 
+          {/* Beta banner */}
+          <div className="mt-10 max-w-3xl mx-auto flex items-center gap-2 justify-center px-5 py-3 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-700 text-sm font-medium">
+            <Sparkles className="w-4 h-4 shrink-0" />
+            베타 기간 · 로그인만 하면 모든 기능 무료
+          </div>
+
           {/* Info note */}
-          <div className="mt-10 max-w-3xl mx-auto flex items-start gap-3 p-5 rounded-xl bg-gray-50 border border-[#E7E7E7]">
+          <div className="mt-5 max-w-3xl mx-auto flex items-start gap-3 p-5 rounded-xl bg-gray-50 border border-[#E7E7E7]">
             <Info className="w-5 h-5 text-[#666666] mt-0.5 shrink-0" />
             <div className="text-sm text-[#666666] leading-relaxed">
               요금제 · 결제 · 환불은 모두 <strong className="text-[#1A1A1A]">더포텐셜</strong>에서 관리됩니다.
-              현재 포텐페이퍼는 베타 기간으로, 로그인만 하면 모든 기능을 무료로 이용하실 수 있습니다.
               정식 런칭 시 위 요금제가 적용될 예정이에요.
             </div>
           </div>
