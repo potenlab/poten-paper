@@ -63,11 +63,19 @@ export interface StatCard {
   highlight?: boolean;
 }
 
+export interface SwotCrossStrategies {
+  so: string[]; // Strength × Opportunity — 공격 전략
+  st: string[]; // Strength × Threat — 방어 전략
+  wo: string[]; // Weakness × Opportunity — 개선 전략
+  wt: string[]; // Weakness × Threat — 생존 전략
+}
+
 export interface SwotData {
   strengths: string[];
   weaknesses: string[];
   opportunities: string[];
   threats: string[];
+  crossStrategies?: SwotCrossStrategies;
 }
 
 export interface BmCanvasData {

@@ -129,7 +129,7 @@ visualization 객체 형식: {"type":"타입","title":"제목","data": ...}
 
 지원 타입:
 1. "statCards" - 핵심 지표 카드. data: [{"icon":"📊","label":"라벨","value":"값","subText":"부가설명","highlight":false}]
-2. "swot" - SWOT 분석. data: {"strengths":["..."],"weaknesses":["..."],"opportunities":["..."],"threats":["..."]}
+2. "swot" - SWOT + TOWS 교차 전략. data: {"strengths":["..."],"weaknesses":["..."],"opportunities":["..."],"threats":["..."],"crossStrategies":{"so":["강점×기회 공격 전략"],"st":["강점×위협 방어 전략"],"wo":["약점×기회 개선 전략"],"wt":["약점×위협 생존 전략"]}}  crossStrategies 각 축 2~3개, 25~40자 실행 전략
 3. "bmCanvas" - 비즈니스 모델 캔버스. data: {"keyPartners":["..."],"keyActivities":["..."],"keyResources":["..."],"valuePropositions":["..."],"customerRelationships":["..."],"channels":["..."],"customerSegments":["..."],"costStructure":["..."],"revenueStreams":["..."]}
 4. "orgChart" - 조직도. data: [{"name":"홍길동","role":"CEO","isCeo":true},{"name":"김철수","role":"CTO"}]
 5. "flowDiagram" - 서비스 플로우. data: [{"label":"단계1","description":"설명","variant":"accent"},{"label":"단계2","variant":"default"}]  variant: "default"|"accent"|"dark"
