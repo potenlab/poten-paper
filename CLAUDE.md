@@ -89,14 +89,36 @@ src/app/
   ├── poten-paper/          ← 사업계획서 생성 (메인)
   ├── poten-checker/        ← 사업계획서 검증
   ├── idea-validator/       ← 아이디어 검증 (B1)
-  ├── potenkit/             ← 리다이렉트 (하위 전부 `/poten-paper` 로) — 제거 예정
+  ├── bm-canvas/            ← 미니 도구: BM 캔버스 (독립, DB 저장 X)
+  ├── swot/                 ← 미니 도구: SWOT 분석 (독립, DB 저장 X)
+  ├── positioning-map/      ← 미니 도구: 포지셔닝맵 (독립, DB 저장 X)
+  ├── competitors/          ← 미니 도구: 경쟁사 비교표 (독립, DB 저장 X)
+  ├── pricing/              ← 가격 안내 (베타 무료 배너)
   ├── login/                ← 구글/카카오 OAuth
-  ├── admin/                ← 통계·검색·삭제
+  ├── admin/                ← 통계·검색·삭제 (potenlab 통합 예정)
   └── api/
       ├── poten-paper/
       ├── poten-checker/
-      └── idea-validator/
+      ├── idea-validator/
+      ├── bm-canvas/
+      ├── swot/
+      ├── positioning-map/
+      └── competitors/
 ```
+
+### 미니 도구 (2026-04-17 신설)
+사업계획서를 쓰기 전에 **아이디어를 다양한 관점으로 빠르게 검토**하는 독립 도구 4종. "무료 · 30초" 포지셔닝. 각각 Gemini 2.5 Flash 1회 호출, 기존 시각화 컴포넌트 재사용, **DB 저장 없음** (세션 한정).
+
+| 도구 | 라우트 | 재사용 컴포넌트 | 출력 스키마 |
+|---|---|---|---|
+| BM 캔버스 | `/bm-canvas/new` | `BmCanvas` | `{summary, canvas: {keyPartners, keyActivities, ...9블록}}` |
+| SWOT 분석 | `/swot/new` | `SwotAnalysis` | `{summary, data: {strengths, weaknesses, opportunities, threats}}` |
+| 포지셔닝맵 | `/positioning-map/new` | `PositioningMap` | `{summary, data: {xAxisLabel, yAxisLabel, dots: [{name, x, y, isOurs}]}}` |
+| 경쟁사 비교표 | `/competitors/new` | `ComparisonGrid` | `{summary, data: {competitors, items: [{feature, values}]}}` |
+
+랜딩(`/poten-paper`) Process 섹션 하단 "미니 도구" 섹션에서 4개 카드로 진입 가능.
+
+**⚠️ fetch 헤더 주의**: OpenRouter 호출 시 `X-Title` 헤더는 **ASCII 만** 가능 (한국어 넣으면 Node fetch 가 throw). 모든 API route 가 `'PotenPaper ...'` 영문 사용.
 
 ### 크레딧 시스템 통합 스펙 (2026-04-17)
 the-potential 과의 크레딧 연동 스펙: [`docs/credits-integration-v1.md`](docs/credits-integration-v1.md)
