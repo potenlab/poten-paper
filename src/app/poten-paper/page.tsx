@@ -33,6 +33,7 @@ const translations = {
           description:
             '사업 아이디어의 시장성·수익성·실현가능성을 AI가 분석하고 점수를 매깁니다.',
           link: '/idea-validator/new',
+          highlight: false,
         },
         {
           icon: 'file',
@@ -40,6 +41,7 @@ const translations = {
           description:
             'PSST 프레임워크로 정부지원사업 신청용 계획서 작성. TAM/SAM/SOM, SWOT, BM 캔버스까지 자동 시각화.',
           link: '/poten-paper/new',
+          highlight: true,
         },
         {
           icon: 'shield',
@@ -47,6 +49,7 @@ const translations = {
           description:
             '작성한 사업계획서를 AI가 6지표로 분석. Blue/Red Team 피드백 + 개선 제안 제공.',
           link: '/poten-checker/new',
+          highlight: false,
         },
       ],
     },
@@ -169,8 +172,17 @@ export default function PotenPaperLandingPage() {
                 <Link
                   key={index}
                   href={item.link}
-                  className="group bg-white rounded-xl p-6 border border-[#E7E7E7] hover:border-[#14A697] hover:shadow-[0px_2px_8px_rgba(0,0,0,0.06)] transition-all duration-300 relative overflow-hidden block"
+                  className={`group rounded-xl p-6 transition-all duration-300 relative overflow-hidden block ${
+                    item.highlight
+                      ? 'bg-gradient-to-br from-[#14A697]/5 to-[#0079FF]/5 border-2 border-[#14A697] shadow-[0_4px_20px_rgba(20,166,151,0.12)] hover:shadow-[0_8px_30px_rgba(20,166,151,0.2)]'
+                      : 'bg-white border border-[#E7E7E7] hover:border-[#14A697] hover:shadow-[0px_2px_8px_rgba(0,0,0,0.06)]'
+                  }`}
                 >
+                  {item.highlight && (
+                    <span className="absolute top-3 right-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-[#14A697] to-[#0079FF] text-white text-[10px] font-bold tracking-wide">
+                      메인
+                    </span>
+                  )}
                   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#14A697]/10 to-transparent rounded-bl-full" />
                   <div className="relative">
                     <div className="w-12 h-12 bg-gradient-to-br from-[#14A697] to-[#0079FF] rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
