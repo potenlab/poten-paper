@@ -371,10 +371,8 @@ export default function MyPage() {
   ];
 
   return (
-    <div className="max-w-[1156px] mx-auto px-4 sm:px-8 py-10">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-foreground">마이페이지</h1>
-      </div>
+    <div className="max-w-[1156px] mx-auto px-4 sm:px-8 py-10 w-full">
+      <h1 className="text-2xl font-bold text-foreground mb-8">마이페이지</h1>
 
       {user && <StatusCards userId={user.id} />}
 
