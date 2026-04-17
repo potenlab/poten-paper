@@ -130,7 +130,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
-      <div className="max-w-[1156px] mx-auto px-4 sm:px-8 xl:px-[62px] h-14 flex items-center justify-between gap-4">
+      <div className="max-w-[1156px] mx-auto px-4 sm:px-8 h-14 flex items-center justify-between gap-4">
         <Link
           href="/"
           className="flex items-center gap-2 text-foreground font-bold text-lg shrink-0"
