@@ -145,7 +145,7 @@ export default function BusinessPage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#E7E7E7]">
         <div className="max-w-[1156px] mx-auto px-6">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/potenkit" className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gradient-to-br from-[#0079FF] to-[#14A697] rounded-lg flex items-center justify-center">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
@@ -154,7 +154,7 @@ export default function BusinessPage() {
 
             <nav className="hidden md:flex items-center gap-8">
               <Link
-                href="/"
+                href="/potenkit"
                 className="text-sm text-[#666666] hover:text-[#0079FF] transition-colors"
               >
                 {t.nav.it}
